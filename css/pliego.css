@@ -1,0 +1,1774 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLIEGO · capa base
+   Proyecto consumidor de SYX (tema example-01). Mobile first.
+
+   Cómo está montado
+   ─────────────────
+   1. SYX pone el vocabulario: atom-btn, atom-pill, atom-radio, atom-breadcrumb,
+      atom-progress, atom-table, atom-stat, atom-avatar, mol-disclosure, mol-btn-group…
+   2. Este archivo define el CONTRATO DE LECTURA: tokens --pliego-* que leen
+      --semantic-* y que la maqueta usa en exclusiva. Ninguna regla de este
+      archivo lleva un color ni una familia escritos a mano.
+   3. Cada modo de lectura (css/lectura/*.css) reescribe dos cosas y nada más:
+      · tokens --semantic-* → repinta también los átomos y moléculas de SYX;
+      · tokens --pliego-*  → cambia medida, rejilla, imagen y qué se muestra.
+      Más unas pocas reglas estructurales, siempre dentro de @layer syx.app.
+   El HTML no cambia nunca: el modo vive en <html data-lectura="…">, igual que
+   la apariencia vive en <html data-theme="…"> según la convención de SYX.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+/* ───────────────────────────────────────────────────────────────────────────
+   0 · MÍNIMOS DE MARCA
+   Lo que Pliego es en cualquier modo y cualquier cuota:
+   · tres constantes de color (papel, tinta, lacre) en claro y en oscuro;
+     todo lo demás se DERIVA de ellas con color relativo de OKLCH;
+   · una sola familia, Roboto Serif, cuyos ejes (peso, anchura, tamaño óptico,
+     grado) dan una voz distinta a cada rol, modo y cuota;
+   · la cabecera «Pliego» se compone igual en todos los modos.
+   Los modos solo pueden mover esas constantes dentro de un margen pequeño.
+   ─────────────────────────────────────────────────────────────────────────── */
+/* :root:root (0,2,0) iguala la especificidad de los bloques oscuros de SYX y,
+   al cargar después, gana en los tres estados de tema. Los modos y las cuotas
+   usan la misma especificidad y cargan aún después. */
+:root:root {
+  --pliego-papel-claro: oklch(0.985 0.005 85);
+  --pliego-papel-oscuro: oklch(0.175 0.014 262);
+  --pliego-tinta-claro: oklch(0.21 0.025 262);
+  --pliego-tinta-oscuro: oklch(0.94 0.008 85);
+  --pliego-lacre-claro: oklch(0.52 0.175 28);
+  --pliego-lacre-oscuro: oklch(0.73 0.14 32);
+
+  /* Paleta semántica de SYX derivada de las tres constantes */
+  --semantic-color-bg-primary: light-dark(var(--pliego-papel-claro), var(--pliego-papel-oscuro));
+  --semantic-color-bg-secondary: light-dark(oklch(from var(--pliego-papel-claro) calc(l - 0.025) c h), oklch(from var(--pliego-papel-oscuro) calc(l + 0.035) c h));
+  --semantic-color-bg-tertiary: light-dark(oklch(from var(--pliego-papel-claro) calc(l - 0.05) c h), oklch(from var(--pliego-papel-oscuro) calc(l + 0.075) c h));
+  --semantic-color-bg-emphasis: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+  --semantic-color-on-emphasis: light-dark(var(--pliego-papel-claro), var(--pliego-papel-oscuro));
+  --semantic-color-bg-inverse: light-dark(var(--pliego-tinta-claro), oklch(from var(--pliego-papel-oscuro) calc(l - 0.1) c h));
+  --semantic-color-text-primary: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+  --semantic-color-text-secondary: light-dark(oklch(from var(--pliego-tinta-claro) calc(l + 0.17) c h), oklch(from var(--pliego-tinta-oscuro) calc(l - 0.14) c h));
+  --semantic-color-text-tertiary: light-dark(oklch(from var(--pliego-tinta-claro) calc(l + 0.29) c h), oklch(from var(--pliego-tinta-oscuro) calc(l - 0.26) c h));
+  --semantic-color-border-default: light-dark(oklch(from var(--pliego-tinta-claro) 0.86 calc(c * 0.4) h), oklch(from var(--pliego-tinta-oscuro) 0.34 c h));
+  --semantic-color-border-subtle: light-dark(oklch(from var(--pliego-tinta-claro) 0.915 calc(c * 0.3) h), oklch(from var(--pliego-tinta-oscuro) 0.27 c h));
+  --semantic-color-border-strong: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+  --semantic-color-border-control: light-dark(oklch(from var(--pliego-tinta-claro) 0.55 c h), oklch(from var(--pliego-tinta-oscuro) 0.62 c h));
+  --semantic-color-primary: light-dark(var(--pliego-lacre-claro), var(--pliego-lacre-oscuro));
+  --semantic-color-primary-strong: light-dark(oklch(from var(--pliego-lacre-claro) calc(l - 0.07) c h), oklch(from var(--pliego-lacre-oscuro) calc(l + 0.05) c h));
+  --semantic-color-primary-text: light-dark(oklch(from var(--pliego-lacre-claro) calc(l - 0.03) c h), var(--pliego-lacre-oscuro));
+  --semantic-color-on-primary: light-dark(var(--pliego-papel-claro), var(--pliego-papel-oscuro));
+  --semantic-color-on-primary-strong: light-dark(var(--pliego-papel-claro), var(--pliego-papel-oscuro));
+  --semantic-color-state-hover-primary: light-dark(oklch(from var(--pliego-lacre-claro) calc(l - 0.09) c h), oklch(from var(--pliego-lacre-oscuro) calc(l + 0.08) c h));
+  --semantic-color-on-state-hover-primary: light-dark(var(--pliego-papel-claro), var(--pliego-papel-oscuro));
+  --semantic-color-link-default: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+  --semantic-color-link-hover: light-dark(var(--pliego-lacre-claro), var(--pliego-lacre-oscuro));
+  --semantic-color-state-error-text: light-dark(var(--pliego-lacre-claro), var(--pliego-lacre-oscuro));
+  --semantic-focus-ring-color: light-dark(var(--pliego-lacre-claro), var(--pliego-lacre-oscuro));
+  --semantic-color-selection-bg: light-dark(oklch(from var(--pliego-lacre-claro) 0.9 0.05 h), oklch(from var(--pliego-lacre-oscuro) 0.4 0.09 h));
+  --semantic-color-selection-text: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+  --semantic-color-placeholder: light-dark(oklch(from var(--pliego-tinta-claro) calc(l + 0.32) c h), oklch(from var(--pliego-tinta-oscuro) calc(l - 0.3) c h));
+  --semantic-color-tone-primary-subtle-bg: light-dark(oklch(from var(--pliego-lacre-claro) 0.955 0.022 h), oklch(from var(--pliego-lacre-oscuro) 0.25 0.04 h));
+  --semantic-color-tone-warning-subtle-bg: light-dark(oklch(from var(--pliego-lacre-claro) 0.94 0.03 h), oklch(from var(--pliego-lacre-oscuro) 0.28 0.05 h));
+  --semantic-color-secondary: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+  --semantic-color-secondary-text: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+  --semantic-color-tertiary: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+  --semantic-color-tertiary-text: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+  --semantic-color-on-secondary: light-dark(var(--pliego-papel-claro), var(--pliego-papel-oscuro));
+  --semantic-color-on-tertiary: light-dark(var(--pliego-papel-claro), var(--pliego-papel-oscuro));
+  --semantic-color-state-hover-secondary: light-dark(var(--pliego-lacre-claro), var(--pliego-lacre-oscuro));
+  --semantic-color-state-hover-tertiary: light-dark(var(--pliego-lacre-claro), var(--pliego-lacre-oscuro));
+  --semantic-color-on-state-hover-secondary: light-dark(var(--pliego-papel-claro), var(--pliego-papel-oscuro));
+  --semantic-color-on-state-hover-tertiary: light-dark(var(--pliego-papel-claro), var(--pliego-papel-oscuro));
+  --semantic-color-category-1-fg: var(--semantic-color-primary-text);
+  --semantic-color-category-2-fg: var(--semantic-color-primary-text);
+  --semantic-color-category-3-fg: var(--semantic-color-primary-text);
+  --semantic-color-category-4-fg: var(--semantic-color-primary-text);
+  --semantic-color-category-5-fg: var(--semantic-color-primary-text);
+  --semantic-color-category-6-fg: var(--semantic-color-primary-text);
+
+  /* Una familia para todo: SYX la hereda en botones, etiquetas y formularios */
+  --pliego-familia: "Roboto Serif", "Iowan Old Style", "Charter", Georgia, serif;
+  --semantic-font-family-primary: var(--pliego-familia);
+  --semantic-font-family-primary-bold: var(--pliego-familia);
+  --semantic-font-family-heading: var(--pliego-familia);
+  --semantic-font-family-heading-md: var(--pliego-familia);
+  --semantic-font-family-mono: var(--pliego-familia);
+
+  /* Eje de grado: en oscuro la tinta clara «engorda»; se compensa sin cambiar
+     el ancho de las letras, así el texto no se recoloca al cambiar de tema. */
+  --pliego-grado: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --pliego-grado: -35; }
+}
+:root[data-theme="dark"] { --pliego-grado: -35; }
+
+/* ───────────────────────────────────────────────────────────────────────────
+   1 · CONTRATO DE LECTURA
+   Valores por defecto. Todo lo que es color o familia sale de --semantic-*.
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* El html de SYX fija 16px; aquí respetamos el tamaño que el lector tenga
+     configurado en su navegador (imprescindible para el modo Fácil). */
+  --reset-html-font: normal normal 400 100%/1.5 var(--semantic-font-family-primary);
+
+  --pliego-modo-nombre: "Diario";
+
+  /* Acabado: 0 Abierto · 1 Lector · 2 Habitual · 3 Mecenas (css/pliego-acabados.css).
+     Un solo número escala aire, interlineado y apretura de titulares. */
+  --pliego-nivel: 0;
+  --pliego-respiro: calc(1 + var(--pliego-nivel) * 0.12);
+  --pliego-interlineado-extra: calc(var(--pliego-nivel) * 0.025);
+  --pliego-apretura: calc(var(--pliego-nivel) * -0.005em);
+
+  /* Color: papeles y tintas */
+  --pliego-papel: var(--semantic-color-bg-primary);
+  --pliego-papel-hundido: var(--semantic-color-bg-secondary);
+  --pliego-papel-realce: var(--semantic-color-bg-tertiary);
+  --pliego-tinta: var(--semantic-color-text-primary);
+  --pliego-tinta-suave: var(--semantic-color-text-secondary);
+  --pliego-tinta-tenue: var(--semantic-color-text-tertiary);
+  --pliego-regla: var(--semantic-color-border-default);
+  --pliego-regla-suave: var(--semantic-color-border-subtle);
+  --pliego-regla-fuerte: var(--semantic-color-border-strong);
+  --pliego-acento: var(--semantic-color-primary-text);
+  --pliego-enlace: var(--semantic-color-text-primary);
+  --pliego-enlace-hover: var(--semantic-color-link-hover);
+  --pliego-alerta: var(--semantic-color-state-error-text);
+  --pliego-resalte: var(--semantic-color-tone-warning-subtle-bg);
+  --pliego-resalte-tinta: var(--semantic-color-text-primary);
+  --pliego-velo: var(--semantic-color-bg-inverse);
+  --pliego-seccion: var(--pliego-acento);
+  --pliego-cabecera-fondo: var(--pliego-papel);
+  --pliego-cabecera-tinta: var(--pliego-tinta);
+
+  /* Familias */
+  --pliego-fuente-titular: var(--semantic-font-family-heading);
+  --pliego-fuente-texto: var(--semantic-font-family-primary);
+  --pliego-fuente-ui: var(--semantic-font-family-primary);
+  --pliego-fuente-dato: var(--semantic-font-family-mono);
+  --pliego-fuente-marca: var(--pliego-familia);
+
+  /* Voces: la misma familia, distintos ejes por rol (anchura y ejes libres) */
+  --pliego-titular-ancho: 96%;
+  --pliego-titular-ejes: "GRAD" var(--pliego-grado);
+  --pliego-texto-ancho: 100%;
+  --pliego-texto-ejes: "GRAD" var(--pliego-grado);
+  --pliego-ui-ancho: 92%;
+  --pliego-ui-ejes: "GRAD" var(--pliego-grado), "opsz" 12;
+  --pliego-dato-ancho: 84%;
+  --pliego-dato-ejes: "GRAD" var(--pliego-grado), "opsz" 10;
+
+  /* Titulares */
+  --pliego-titular-peso: var(--semantic-font-weight-bold);
+  --pliego-titular-estilo: normal;
+  --pliego-titular-caja: none;
+  --pliego-titular-espaciado: -0.01em;
+  --pliego-titular-interlineado: 1.12;
+  --pliego-marca-peso: 780;
+  --pliego-marca-estilo: normal;
+  --pliego-marca-caja: none;
+  --pliego-marca-espaciado: -0.035em;
+  --pliego-marca-ancho: 112%;
+  --pliego-marca-ejes: "GRAD" var(--pliego-grado), "opsz" 144;
+
+  /* Escala tipográfica (fluida, móvil → escritorio) */
+  --pliego-t-marca: clamp(2.5rem, 9vw, 5.5rem);
+  --pliego-t-apertura: clamp(1.875rem, 5.2vw, 3.25rem);
+  --pliego-t-h1: clamp(2rem, 6vw, 3.5rem);
+  --pliego-t-h2: clamp(1.375rem, 3vw, 1.75rem);
+  --pliego-t-teaser: clamp(1.125rem, 2.2vw, 1.3125rem);
+  --pliego-t-entradilla: clamp(1.125rem, 2.4vw, 1.3125rem);
+  --pliego-t-cita: clamp(1.5rem, 3.6vw, 2.25rem);
+  --pliego-t-bloque: 0.8125rem;
+  --pliego-t-ui: 0.8125rem;
+  --pliego-t-secundario: 0.9375rem;
+  --pliego-t-mini: 0.75rem;
+
+  /* Texto corrido */
+  --pliego-texto-tamano: 1.125rem;
+  --pliego-texto-interlineado: 1.62;
+  --pliego-texto-medida: 40rem;
+  --pliego-texto-alineacion: start;
+  --pliego-texto-guiones: manual;
+  --pliego-texto-espaciado: normal;
+  --pliego-texto-palabras: normal;
+  --pliego-parrafo-espacio: 1.1em;
+  --pliego-parrafo-sangria: 0;
+  --pliego-numeros: proportional-nums;
+  --pliego-cintillo-caja: uppercase;
+  --pliego-cintillo-espaciado: 0.08em;
+  --pliego-cintillo-variante: normal;
+  --pliego-subrayado: underline;
+  --pliego-subrayado-grosor: 0.06em;
+  --pliego-subrayado-separacion: 0.18em;
+
+  /* Imagen */
+  --pliego-img-ver: block;
+  --pliego-img-proporcion: 3 / 2;
+  --pliego-img-filtro: none;
+  --pliego-img-radio: 0;
+  --pliego-img-apertura-proporcion: 3 / 2;
+
+  /* Forma y ritmo */
+  --pliego-radio: 0;
+  --pliego-grosor-regla: var(--semantic-border-width-thin);
+  --pliego-grosor-regla-fuerte: var(--semantic-border-width-thick);
+  --pliego-margen: clamp(1rem, 4vw, 2.5rem);
+  --pliego-ancho: 82rem;
+  /* La cabecera y la franja de publicidad no siguen el ancho del modo:
+     así la fecha y los botones caben en una fila en todos los modos */
+  --pliego-ancho-cabecera: 82rem;
+  --pliego-hueco: clamp(1.25rem, 3vw, 2rem);
+  --pliego-hueco-bloque: clamp(2.5rem, 6vw, 4rem);
+  --pliego-hueco-teaser: 0.5rem;
+
+  /* Qué se muestra (palancas de visibilidad) */
+  --pliego-ver-entradilla: block;
+  --pliego-ver-entradilla-apertura: block;
+  --pliego-ver-media-apertura: block;
+  --pliego-ver-meta: flex;
+  --pliego-ver-ultima: block;
+  --pliego-ver-lema: block;
+  --pliego-ver-nota: block;
+  --pliego-ver-cita: block;
+  --pliego-ver-facil: block;
+  --pliego-ver-contexto: block;
+  --pliego-ver-tiempo-completo: inline;
+  --pliego-ver-tiempo-expres: none;
+  --pliego-ver-tiempo-facil: none;
+
+  /* Rejillas */
+  --pliego-rejilla-min: 15rem;
+  --pliego-teaser-areas: "media" "cuerpo";
+  --pliego-teaser-columnas: minmax(0, 1fr);
+  --pliego-teaser-apertura-areas: "media" "cuerpo";
+  --pliego-teaser-apertura-columnas: minmax(0, 1fr);
+  --pliego-portada-columnas: minmax(0, 1fr);
+  --pliego-portada-areas:
+    "ultima"
+    "apertura"
+    "destacadas"
+    "lateral"
+    "leido"
+    "opinion"
+    "pubmedio"
+    "profundidad"
+    "mejora"
+    "ciencia"
+    "boletin";
+
+  /* Artículo: líneas con nombre. Los modos las mueven; los hijos solo
+     dicen en qué línea viven (sangre, ancho, texto, margen). */
+  --pliego-articulo-columnas:
+    [sangre-start] var(--pliego-margen)
+    [ancho-start texto-start margen-start] minmax(0, 1fr)
+    [texto-end ancho-end margen-end] var(--pliego-margen)
+    [sangre-end];
+  --pliego-columna-portada: sangre;
+  --pliego-columna-ancha: sangre;
+  --pliego-columna-nota: texto;
+  --pliego-columna-ficha: texto;
+  --pliego-fila-nota: auto;
+}
+
+/* Etiquetas de género (atom-pill): con los tokens del átomo, la píldora toma
+   el cuerpo y el espaciado del cintillo que la acompaña y una altura de unas
+   1,7 veces su cuerpo. */
+.pliego-genero {
+  --component-pill-font-size: var(--pliego-t-mini);
+  --component-pill-padding-block: 0.1875em;
+  --component-pill-padding-inline: 0.625em;
+  --component-pill-line-height: 1.2;
+  --semantic-letter-spacing-wide: var(--pliego-cintillo-espaciado);
+}
+
+/* Colores de sección: salen de las categorías semánticas de SYX */
+.pliego-seccion--espana { --pliego-seccion: var(--semantic-color-category-1-fg); }
+.pliego-seccion--internacional { --pliego-seccion: var(--semantic-color-category-2-fg); }
+.pliego-seccion--sociedad { --pliego-seccion: var(--semantic-color-category-3-fg); }
+.pliego-seccion--ciencia { --pliego-seccion: var(--semantic-color-category-4-fg); }
+.pliego-seccion--economia { --pliego-seccion: var(--semantic-color-category-5-fg); }
+.pliego-seccion--cultura { --pliego-seccion: var(--semantic-color-category-6-fg); }
+.pliego-seccion--deportes { --pliego-seccion: var(--pliego-acento); }
+
+@media (min-width: 48rem) {
+  :root {
+    --pliego-articulo-columnas:
+      [sangre-start] minmax(var(--pliego-margen), 1fr)
+      [ancho-start] minmax(0, 5rem)
+      [texto-start margen-start] minmax(0, var(--pliego-texto-medida))
+      [texto-end margen-end] minmax(0, 5rem)
+      [ancho-end] minmax(var(--pliego-margen), 1fr)
+      [sangre-end];
+    --pliego-columna-ancha: ancho;
+    --pliego-columna-portada: ancho;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   2 · MAQUETA
+   ─────────────────────────────────────────────────────────────────────────── */
+@layer syx.app {
+  /* syx-reuse-file: maqueta editorial; layout-grid reparte columnas pero no áreas con nombre ni subgrid */
+
+  html {
+    scroll-padding-block-start: 1rem;
+    text-size-adjust: 100%;
+  }
+
+  body.pliego-pagina {
+    margin: 0;
+    background: var(--pliego-papel);
+    color: var(--pliego-tinta);
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-variant-numeric: var(--pliego-numeros);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* SYX pinta a y p en su capa base; dentro del periódico heredan de su pieza */
+  .pliego-genero {
+    display: inline-flex;
+  }
+
+  .pliego-pagina a:not([class*="atom-"]) {
+    color: inherit;
+    font-weight: inherit;
+  }
+
+  .pliego-pagina :where(h1, h2, h3, h4) {
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .pliego-pagina :where(p, ol, ul, figure, blockquote) {
+    margin: 0;
+    color: inherit;
+  }
+
+  .pliego-pagina img {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+
+  .pliego-pagina :focus-visible {
+    outline: var(--semantic-focus-ring-width) var(--semantic-focus-ring-style) var(--semantic-focus-ring-color);
+    outline-offset: var(--semantic-focus-ring-offset);
+  }
+
+  ::selection {
+    background: var(--semantic-color-selection-bg);
+    color: var(--semantic-color-selection-text);
+  }
+
+  /* ── Cabecera ─────────────────────────────────────────────────────────── */
+  /* syx-reuse: checked org-site-header — un periódico necesita línea de edición, marca centrada y carril de secciones */
+  .pliego-cabecera {
+    display: grid;
+    gap: 0.75rem;
+    padding-inline: var(--pliego-margen);
+    padding-block: 0.75rem 0;
+    background: var(--pliego-cabecera-fondo);
+    color: var(--pliego-cabecera-tinta);
+    text-align: center;
+  }
+
+  /* Fecha a la izquierda, botones a la derecha, siempre en la misma fila:
+     si falta sitio, es la línea de edición la que pasa a dos renglones */
+  .pliego-cabecera__barra {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    max-inline-size: var(--pliego-ancho-cabecera);
+    inline-size: 100%;
+    margin-inline: auto;
+  }
+
+  .pliego-cabecera__edicion {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-suave);
+    text-align: start;
+  }
+
+  .pliego-cabecera__numero {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+    color: var(--pliego-tinta-tenue);
+  }
+
+  .pliego-cabecera__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* El botón lee el nombre del modo activo del propio token: sin JS ni texto duplicado */
+  .pliego-modo-actual::after {
+    content: " · " var(--pliego-modo-nombre);
+    font-weight: var(--semantic-font-weight-bold);
+  }
+
+  .pliego-cabecera__marca {
+    font-family: var(--pliego-fuente-marca);
+    font-stretch: var(--pliego-marca-ancho);
+    font-variation-settings: var(--pliego-marca-ejes);
+    font-size: var(--pliego-t-marca);
+    font-weight: var(--pliego-marca-peso);
+    font-style: var(--pliego-marca-estilo);
+    text-transform: var(--pliego-marca-caja);
+    letter-spacing: var(--pliego-marca-espaciado);
+    line-height: 0.95;
+  }
+
+  .pliego-cabecera__marca a {
+    text-decoration: none;
+  }
+
+  .pliego-cabecera__lema {
+    display: var(--pliego-ver-lema);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    color: var(--pliego-tinta-tenue);
+  }
+
+  .pliego-secciones {
+    margin-inline: calc(-1 * var(--pliego-margen));
+    border-block: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .pliego-secciones__lista {
+    display: flex;
+    gap: 0.25rem 1.25rem;
+    inline-size: max-content;
+    margin-inline: auto;
+    padding-inline: var(--pliego-margen);
+    padding-block: 0.625rem;
+    list-style: none;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+    font-weight: var(--semantic-font-weight-medium);
+  }
+
+  .pliego-secciones__lista a {
+    display: inline-block;
+    padding-block: var(--pliego-objetivo-relleno, 0.25rem);
+    text-decoration: none;
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-secciones__lista a:hover,
+  .pliego-secciones__lista a[aria-current] {
+    color: var(--pliego-tinta);
+    text-decoration: var(--pliego-subrayado);
+    text-decoration-thickness: var(--pliego-grosor-regla-fuerte);
+    text-underline-offset: 0.4em;
+  }
+
+  /* ── Cabecera en móvil: marca y acciones en una fila, fecha debajo ──
+     Ahorra unos 120 px de altura antes de la primera noticia. */
+  @media (max-width: 47.99rem) {
+    .pliego-cabecera {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas:
+        "marca acciones"
+        "edicion edicion"
+        "secciones secciones";
+      align-items: center;
+      gap: 0.25rem 0.75rem;
+      padding-block-start: 0.625rem;
+      text-align: start;
+    }
+
+    .pliego-cabecera__barra { display: contents; }
+    .pliego-cabecera__marca { grid-area: marca; font-size: 2.25rem; }
+    .pliego-cabecera__acciones { grid-area: acciones; justify-content: end; justify-self: end; }
+    .pliego-cabecera__edicion { grid-area: edicion; }
+    .pliego-cabecera__lema { display: none; }
+    .pliego-secciones { grid-area: secciones; margin-block-start: 0.25rem; }
+
+    /* El botón de lectura muestra solo el icono y el modo activo */
+    .pliego-modo-actual { font-size: 0; }
+
+    .pliego-modo-actual::after {
+      content: var(--pliego-modo-nombre);
+      font-size: var(--component-button-font-size-sm);
+    }
+
+    .pliego-insignia span { display: none; }
+  }
+
+  /* ── Panel de modos de lectura (Popover API: abre y cierra sin JS) ───── */
+  /* syx-reuse: checked mol-dialog (modal, captura el foco) y mol-menu — un ajuste persistente pide un panel ligero que se cierra al tocar fuera */
+  .pliego-lectura {
+    margin: 0;
+    inset: auto 0 0 0;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    max-block-size: min(88svh, 46rem);
+    overflow-y: auto;
+    padding: 1.25rem var(--pliego-margen) calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    border: 0;
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    border-start-start-radius: var(--semantic-border-radius-xl);
+    border-start-end-radius: var(--semantic-border-radius-xl);
+    background: var(--pliego-papel);
+    color: var(--pliego-tinta);
+    box-shadow: var(--semantic-shadow-xl);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+  }
+
+  .pliego-lectura::backdrop {
+    background: color-mix(in oklab, var(--pliego-velo) 35%, transparent);
+  }
+
+  .pliego-lectura__formulario {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .pliego-lectura__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .pliego-lectura__titulo {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 1.375rem;
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+  }
+
+  .pliego-lectura__ayuda {
+    font-size: var(--pliego-t-ui);
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-lectura__grupo {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+  }
+
+  .pliego-lectura__grupo--apariencia {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    padding-block-start: 0.75rem;
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+  }
+
+  .pliego-lectura__grupo--cuota {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-block-start: 0.75rem;
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+  }
+
+  .pliego-lectura__formulario > .atom-switch {
+    justify-self: start;
+  }
+
+  .pliego-lectura__leyenda {
+    padding: 0;
+    margin-block-end: 0.5rem;
+    font-size: var(--pliego-t-mini);
+    font-weight: var(--semantic-font-weight-medium);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pliego-tinta-tenue);
+  }
+
+  /* syx-reuse: checked atom-radio (se usa dentro) — la tarjeta añade la muestra tipográfica de cada modo */
+  .pliego-opcion {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.125rem 0.875rem;
+    padding: 0.625rem 0.75rem;
+    border: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+    border-radius: var(--semantic-border-radius-lg);
+    background: var(--pliego-papel);
+  }
+
+  .pliego-opcion > .atom-radio {
+    align-self: end;
+  }
+
+  .pliego-opcion:has(:checked) {
+    border-color: var(--semantic-color-primary);
+    background: var(--pliego-papel-hundido);
+    box-shadow: inset 0 0 0 1px var(--semantic-color-primary);
+  }
+
+  .pliego-opcion__muestra {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border-radius: var(--semantic-border-radius-default);
+    background: var(--pliego-muestra-papel, var(--pliego-papel-hundido));
+    color: var(--pliego-muestra-tinta, var(--pliego-tinta));
+    font-family: var(--pliego-familia);
+    font-stretch: var(--pliego-muestra-ancho, 100%);
+    font-variation-settings: "opsz" 48;
+    font-style: var(--pliego-muestra-estilo, normal);
+    font-weight: var(--pliego-muestra-peso, 700);
+    font-size: 1.375rem;
+    line-height: 1;
+    box-shadow: inset 0 0 0 1px var(--pliego-muestra-borde, var(--pliego-regla-suave)), inset 0 -0.3rem 0 var(--pliego-muestra-acento, transparent);
+  }
+
+  .pliego-opcion__nota {
+    grid-column: 2;
+    align-self: start;
+    font-size: var(--pliego-t-ui);
+    color: var(--pliego-tinta-suave);
+  }
+
+  /* ── Portada ──────────────────────────────────────────────────────────── */
+  .pliego-portada {
+    display: grid;
+    grid-template-columns: var(--pliego-portada-columnas);
+    grid-template-areas: var(--pliego-portada-areas);
+    gap: calc(var(--pliego-hueco-bloque) * var(--pliego-respiro)) var(--pliego-hueco);
+    max-inline-size: var(--pliego-ancho);
+    margin-inline: auto;
+    padding-inline: var(--pliego-margen);
+    padding-block: 1.5rem var(--pliego-hueco-bloque);
+  }
+
+  .pliego-portada > * { min-inline-size: 0; }
+  .pliego-portada__ultima { grid-area: ultima; }
+  .pliego-portada__apertura { grid-area: apertura; }
+  .pliego-portada__destacadas { grid-area: destacadas; }
+  .pliego-portada__leido { grid-area: leido; }
+  .pliego-portada__opinion { grid-area: opinion; }
+  .pliego-portada__profundidad { grid-area: profundidad; }
+  .pliego-portada__ciencia { grid-area: ciencia; }
+  .pliego-portada__boletin { grid-area: boletin; align-self: start; }
+  .pliego-portada__lateral { grid-area: lateral; }
+  .pliego-portada__pubmedio { grid-area: pubmedio; }
+  .pliego-portada__mejora { grid-area: mejora; }
+
+  /* Última hora */
+  .pliego-ultima {
+    display: var(--pliego-ver-ultima);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+  }
+
+  .pliego-ultima__titulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-block-end: 0.5rem;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--pliego-alerta);
+  }
+
+  .pliego-ultima__titulo::before {
+    content: "";
+    inline-size: 0.5rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .pliego-ultima__lista {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pliego-ultima__item {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  .pliego-ultima__item time {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-variant-numeric: tabular-nums;
+    color: var(--pliego-alerta);
+  }
+
+  .pliego-ultima__item a {
+    text-decoration: none;
+  }
+
+  .pliego-ultima__item a:hover {
+    text-decoration: var(--pliego-subrayado);
+  }
+
+  /* Bloques con cabecera */
+  .pliego-bloque {
+    display: grid;
+    gap: var(--pliego-hueco);
+    align-content: start;
+  }
+
+  .pliego-bloque__cabecera {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block-start: 0.5rem;
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-regla-fuerte);
+  }
+
+  .pliego-bloque__titulo {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-bloque);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    font-variant-caps: var(--pliego-cintillo-variante);
+  }
+
+  .pliego-rejilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--pliego-rejilla-min)), 1fr));
+    gap: var(--pliego-hueco);
+  }
+
+  /* ── Pieza de portada (teaser) ────────────────────────────────────────── */
+  /* syx-reuse: checked mol-card — su caja, sombra y radio fijos chocan con la jerarquía de portada; la pieza necesita disposición por áreas que cambia con el modo */
+  .pliego-teaser {
+    display: grid;
+    grid-template-columns: var(--pliego-teaser-columnas);
+    grid-template-areas: var(--pliego-teaser-areas);
+    gap: 0.75rem 1rem;
+    align-content: start;
+    position: relative;
+    min-inline-size: 0;
+  }
+
+  .pliego-teaser__media {
+    grid-area: media;
+    align-self: start;
+    display: var(--pliego-img-ver);
+    overflow: hidden;
+    border-radius: var(--pliego-img-radio);
+    background: var(--pliego-papel-hundido);
+  }
+
+  .pliego-teaser__media img {
+    inline-size: 100%;
+    aspect-ratio: var(--pliego-img-proporcion);
+    object-fit: cover;
+    filter: var(--pliego-img-filtro);
+  }
+
+  .pliego-teaser__cuerpo {
+    grid-area: cuerpo;
+    display: grid;
+    gap: var(--pliego-hueco-teaser);
+    align-content: start;
+    min-inline-size: 0;
+  }
+
+  .pliego-teaser__cintillo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    font-variant-caps: var(--pliego-cintillo-variante);
+    color: var(--pliego-seccion);
+  }
+
+  .pliego-teaser__titulo {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: var(--pliego-t-teaser);
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+    text-transform: var(--pliego-titular-caja);
+    letter-spacing: calc(var(--pliego-titular-espaciado) + var(--pliego-apretura));
+    line-height: var(--pliego-titular-interlineado);
+  }
+
+  /* El enlace del titular cubre toda la pieza: un solo destino, nombre = titular */
+  .pliego-teaser__enlace {
+    color: var(--pliego-enlace);
+    text-decoration: none;
+  }
+
+  .pliego-teaser__enlace::after {
+    content: "";
+    /* syx-allow R03: enlace que cubre la pieza (patrón de mol-card__link) */
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .pliego-teaser__enlace:focus-visible {
+    outline: none;
+  }
+
+  .pliego-teaser:has(.pliego-teaser__enlace:focus-visible) {
+    outline: var(--semantic-focus-ring-width) var(--semantic-focus-ring-style) var(--semantic-focus-ring-color);
+    outline-offset: 0.375rem;
+  }
+
+  .pliego-teaser:hover .pliego-teaser__enlace {
+    color: var(--pliego-enlace-hover);
+    text-decoration: var(--pliego-subrayado);
+    text-decoration-thickness: var(--pliego-subrayado-grosor);
+    text-underline-offset: var(--pliego-subrayado-separacion);
+  }
+
+  .pliego-teaser__entradilla {
+    display: var(--pliego-ver-entradilla);
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-teaser__meta {
+    display: var(--pliego-ver-meta);
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-tenue);
+  }
+
+  .pliego-teaser__autor {
+    font-weight: var(--semantic-font-weight-medium);
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-teaser__meta time,
+  .pliego-teaser__tiempo {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pliego-teaser__tiempo::after {
+    content: " de lectura";
+  }
+
+  /* Pieza de apertura */
+  .pliego-teaser--apertura {
+    grid-template-columns: var(--pliego-teaser-apertura-columnas);
+    grid-template-areas: var(--pliego-teaser-apertura-areas);
+    gap: 1rem var(--pliego-hueco);
+  }
+
+  .pliego-teaser--apertura .pliego-teaser__media img {
+    aspect-ratio: var(--pliego-img-apertura-proporcion);
+  }
+
+  .pliego-teaser--apertura .pliego-teaser__titulo {
+    font-size: var(--pliego-t-apertura);
+    line-height: 1.04;
+  }
+
+  .pliego-teaser--apertura .pliego-teaser__media {
+    display: var(--pliego-ver-media-apertura);
+  }
+
+  .pliego-teaser--apertura .pliego-teaser__entradilla {
+    display: var(--pliego-ver-entradilla-apertura);
+    font-size: var(--pliego-t-entradilla);
+    color: var(--pliego-tinta);
+  }
+
+  /* Opinión: sin imagen, el autor manda */
+  .pliego-teaser--opinion {
+    grid-template-areas: "cuerpo";
+    grid-template-columns: minmax(0, 1fr);
+    padding-block-start: 0.75rem;
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+  }
+
+  .pliego-teaser--opinion .pliego-teaser__titulo {
+    font-style: italic;
+    font-weight: var(--semantic-font-weight-regular);
+  }
+
+  .pliego-teaser--opinion .pliego-teaser__meta {
+    order: -1;
+  }
+
+  /* Lo más leído */
+  .pliego-leido {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+
+  .pliego-leido__titulo {
+    padding-block-start: 0.5rem;
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-regla-fuerte);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-bloque);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    font-variant-caps: var(--pliego-cintillo-variante);
+  }
+
+  .pliego-leido__lista {
+    display: grid;
+    gap: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: leido;
+  }
+
+  .pliego-leido__item {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+    border-block-end: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+    counter-increment: leido;
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 1.0625rem;
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+    line-height: 1.25;
+  }
+
+  .pliego-leido__item::before {
+    content: counter(leido);
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 1.75rem;
+    line-height: 1;
+    font-variant-numeric: lining-nums;
+    color: var(--pliego-acento);
+  }
+
+  .pliego-leido__item a {
+    display: block;
+    min-block-size: 1.5rem;
+    text-decoration: none;
+  }
+
+  .pliego-leido__item a:hover {
+    text-decoration: var(--pliego-subrayado);
+  }
+
+  /* Boletín */
+  /* syx-reuse: checked mol-form-field (se usan atom-label, atom-input y atom-btn dentro) — necesita una franja de captación propia */
+  .pliego-boletin {
+    display: grid;
+    gap: 0.75rem;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border-radius: var(--pliego-radio);
+    background: var(--pliego-papel-hundido);
+    border: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+  }
+
+  .pliego-boletin__titulo {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: var(--pliego-t-h2);
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+    letter-spacing: calc(var(--pliego-titular-espaciado) + var(--pliego-apretura));
+  }
+
+  .pliego-boletin__texto {
+    max-inline-size: 36rem;
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-boletin__formulario {
+    display: grid;
+    gap: 0.5rem;
+    max-inline-size: 34rem;
+  }
+
+  .pliego-boletin__fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .pliego-boletin__fila .atom-input {
+    flex: 1 1 14rem;
+    min-inline-size: 0;
+  }
+
+  .pliego-boletin__estado {
+    min-block-size: 1.5em;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+    color: var(--pliego-tinta-suave);
+  }
+
+  /* ── Página de artículo ───────────────────────────────────────────────── */
+  /* syx-reuse: checked atom-progress (se usa tal cual) — solo se coloca pegado arriba */
+  .pliego-progreso {
+    /* syx-allow R03: la barra de progreso acompaña la lectura pegada arriba */
+    position: sticky;
+    inset-block-start: env(safe-area-inset-top, 0px);
+    z-index: var(--semantic-z-index-sticky);
+    display: block;
+    inline-size: 100%;
+  }
+
+  .pliego-pagina-articulo {
+    display: grid;
+    gap: calc(var(--pliego-hueco-bloque) * var(--pliego-respiro));
+    padding-block: 1rem var(--pliego-hueco-bloque);
+  }
+
+  .pliego-pagina-articulo > .pliego-ruta {
+    margin-block-end: calc(1.25rem - var(--pliego-hueco-bloque) * var(--pliego-respiro));
+  }
+
+  .pliego-ruta {
+    max-inline-size: calc(var(--pliego-texto-medida) + 2 * var(--pliego-margen));
+    inline-size: 100%;
+    margin-inline: auto;
+    padding-inline: var(--pliego-margen);
+    overflow-x: auto;
+  }
+
+  .pliego-articulo {
+    display: grid;
+    grid-template-columns: var(--pliego-articulo-columnas);
+    row-gap: var(--pliego-hueco);
+    align-content: start;
+  }
+
+  .pliego-articulo > *,
+  .pliego-articulo__cuerpo > *,
+  .pliego-capitulo > *,
+  .pliego-articulo__pie > * {
+    grid-column: texto;
+    min-inline-size: 0;
+  }
+
+  /* Cuerpo, capítulos y pie heredan las líneas del artículo (subgrid) */
+  .pliego-articulo .pliego-articulo__cuerpo,
+  .pliego-articulo__cuerpo .pliego-capitulo,
+  .pliego-articulo .pliego-articulo__pie {
+    grid-column: sangre;
+    display: grid;
+    grid-template-columns: subgrid;
+    row-gap: var(--pliego-parrafo-espacio);
+    align-content: start;
+  }
+
+  .pliego-articulo .pliego-articulo__cuerpo,
+  .pliego-articulo .pliego-articulo__pie {
+    row-gap: calc(var(--pliego-hueco-bloque) * var(--pliego-respiro));
+  }
+
+  .pliego-articulo .pliego-articulo__pie {
+    row-gap: var(--pliego-hueco);
+  }
+
+  .pliego-articulo__cabecera {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .pliego-articulo__cintillo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    font-variant-caps: var(--pliego-cintillo-variante);
+    color: var(--pliego-seccion);
+  }
+
+  .pliego-articulo__titulo {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: var(--pliego-t-h1);
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+    text-transform: var(--pliego-titular-caja);
+    letter-spacing: calc(var(--pliego-titular-espaciado) + var(--pliego-apretura));
+    line-height: 1.04;
+  }
+
+  .pliego-articulo__entradilla {
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    font-size: var(--pliego-t-entradilla);
+    line-height: 1.45;
+    color: var(--pliego-tinta-suave);
+    text-wrap: pretty;
+  }
+
+  /* Firma */
+  .pliego-firma {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding-block: 0.875rem;
+    border-block: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+  }
+
+  .pliego-firma__texto {
+    display: grid;
+    gap: 0.125rem;
+  }
+
+  .pliego-firma__autor a {
+    display: inline-block;
+    padding-block: 0.3125rem;
+    font-weight: var(--semantic-font-weight-bold);
+    text-decoration: none;
+  }
+
+  .pliego-firma__autor a:hover {
+    text-decoration: var(--pliego-subrayado);
+  }
+
+  .pliego-firma__lugar,
+  .pliego-firma__fechas {
+    color: var(--pliego-tinta-tenue);
+  }
+
+  .pliego-firma__lugar::before {
+    content: "· ";
+  }
+
+  .pliego-firma__fechas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.75rem;
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-size: var(--pliego-t-mini);
+  }
+
+  .pliego-tiempo {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-tiempo__completo { display: var(--pliego-ver-tiempo-completo); }
+  .pliego-tiempo__expres { display: var(--pliego-ver-tiempo-expres); }
+  .pliego-tiempo__facil { display: var(--pliego-ver-tiempo-facil); }
+
+  .pliego-compartir {
+    justify-content: start;
+    flex-wrap: wrap;
+  }
+
+  /* Figuras */
+  .pliego-figura {
+    display: var(--pliego-img-ver);
+  }
+
+  .pliego-articulo > .pliego-figura--portada {
+    grid-column: var(--pliego-columna-portada);
+  }
+
+  .pliego-capitulo > .pliego-figura--ancha {
+    grid-column: var(--pliego-columna-ancha);
+  }
+
+  .pliego-figura img {
+    inline-size: 100%;
+    aspect-ratio: var(--pliego-img-apertura-proporcion);
+    object-fit: cover;
+    border-radius: var(--pliego-img-radio);
+    filter: var(--pliego-img-filtro);
+  }
+
+  .pliego-figura__pie {
+    max-inline-size: var(--pliego-texto-medida);
+    margin-block-start: 0.5rem;
+    padding-inline: var(--pliego-margen);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    line-height: 1.45;
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-figura__credito {
+    color: var(--pliego-tinta-tenue);
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Lectura fácil (disclosure de SYX) y claves */
+  .pliego-facil { display: var(--pliego-ver-facil); }
+  .pliego-contexto { display: var(--pliego-ver-contexto); }
+
+  .pliego-facil__detalle .mol-disclosure__content p + p,
+  .pliego-contexto .mol-disclosure__content p + p {
+    margin-block-start: 0.5em;
+  }
+
+  /* syx-reuse: checked atom-list (marcador de icono propio de SYX) — las claves llevan un número de orden editorial */
+  .pliego-claves {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border-radius: var(--pliego-radio);
+    background: var(--pliego-papel-hundido);
+    border-inline-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-seccion);
+  }
+
+  .pliego-claves__titulo {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-bloque);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    font-variant-caps: var(--pliego-cintillo-variante);
+  }
+
+  .pliego-claves__lista {
+    display: grid;
+    gap: 0.625rem;
+    padding-inline-start: 1.75rem;
+    counter-reset: clave;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-secundario);
+    line-height: 1.5;
+  }
+
+  .pliego-claves__lista li {
+    counter-increment: clave;
+  }
+
+  .pliego-claves__lista li::marker {
+    content: counter(clave) "  ";
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-weight: var(--semantic-font-weight-bold);
+    color: var(--pliego-seccion);
+  }
+
+  .pliego-claves strong {
+    font-weight: var(--semantic-font-weight-bold);
+  }
+
+  /* Texto corrido */
+  .pliego-capitulo > p {
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    font-size: var(--pliego-texto-tamano);
+    line-height: calc(var(--pliego-texto-interlineado) + var(--pliego-interlineado-extra));
+    text-align: var(--pliego-texto-alineacion);
+    hyphens: var(--pliego-texto-guiones);
+    letter-spacing: var(--pliego-texto-espaciado);
+    word-spacing: var(--pliego-texto-palabras);
+    text-wrap: pretty;
+    hanging-punctuation: first;
+  }
+
+  .pliego-capitulo > p + p {
+    text-indent: var(--pliego-parrafo-sangria);
+  }
+
+  .pliego-capitulo__titulo {
+    padding-block-start: 0.5rem;
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: var(--pliego-t-h2);
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+    letter-spacing: calc(var(--pliego-titular-espaciado) + var(--pliego-apretura));
+    line-height: 1.15;
+  }
+
+  .pliego-articulo q {
+    quotes: "«" "»" "“" "”";
+  }
+
+  .pliego-articulo abbr[title] {
+    text-decoration: underline dotted;
+    text-underline-offset: 0.2em;
+    cursor: help;
+  }
+
+  .pliego-articulo dfn {
+    font-style: italic;
+  }
+
+  /* Cita destacada */
+  .pliego-cita {
+    display: var(--pliego-ver-cita);
+    padding-block: 0.5rem;
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-seccion);
+  }
+
+  .pliego-cita__texto {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: var(--pliego-t-cita);
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+    letter-spacing: calc(var(--pliego-titular-espaciado) + var(--pliego-apretura));
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .pliego-cita__texto p::before { content: "«"; }
+  .pliego-cita__texto p::after { content: "»"; }
+
+  .pliego-cita__autor {
+    margin-block-start: 0.75rem;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-cita__autor cite {
+    font-style: normal;
+    font-weight: var(--semantic-font-weight-bold);
+    color: var(--pliego-tinta);
+  }
+
+  /* Nota al margen / despiece */
+  .pliego-capitulo > .pliego-nota {
+    display: var(--pliego-ver-nota);
+    grid-column: var(--pliego-columna-nota);
+    grid-row: var(--pliego-fila-nota);
+    align-self: start;
+    padding: 0.875rem 1rem;
+    border-inline-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-regla);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+    line-height: 1.5;
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-nota strong {
+    color: var(--pliego-tinta);
+  }
+
+  /* Ficha de datos */
+  .pliego-capitulo > .pliego-ficha {
+    grid-column: var(--pliego-columna-ficha);
+    display: grid;
+    gap: 1rem;
+    padding-block: 1.25rem;
+    border-block: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+  }
+
+  .pliego-ficha__titulo {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 1.25rem;
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+  }
+
+  .pliego-ficha__cifras {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1rem;
+  }
+
+  .pliego-ficha__tabla {
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+
+  .pliego-ficha__leyenda {
+    padding-block-end: 0.5rem;
+    caption-side: top;
+    text-align: start;
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-ficha__fuente {
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-tenue);
+  }
+
+  /* Barra de dato dentro de la tabla: el valor viaja en el HTML como dato */
+  .pliego-barra {
+    display: grid;
+    grid-template-columns: calc(var(--pliego-valor) * 1%) auto;
+    align-items: center;
+    gap: 0.5rem;
+    min-inline-size: 9rem;
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pliego-barra::before {
+    content: "";
+    block-size: 0.5rem;
+    border-radius: var(--pliego-radio);
+    background: var(--pliego-seccion);
+  }
+
+  .pliego-barra--alerta::before {
+    background: var(--pliego-alerta);
+  }
+
+  /* Cronología */
+  .pliego-cronologia {
+    display: grid;
+    gap: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-secundario);
+  }
+
+  .pliego-cronologia__item {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding-block: 0.625rem;
+    border-block-end: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+  }
+
+  .pliego-cronologia__item time {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-size: var(--pliego-t-ui);
+    color: var(--pliego-seccion);
+  }
+
+  /* Pie del artículo */
+  /* El filete del pie se queda en la columna de texto, no cruza la página */
+  .pliego-articulo__pie::before {
+    content: "";
+    grid-column: texto;
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+  }
+
+  .pliego-correccion {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-temas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+  }
+
+  .pliego-temas__titulo {
+    font-size: var(--pliego-t-mini);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    color: var(--pliego-tinta-tenue);
+  }
+
+  .pliego-temas__lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pliego-temas__lista a {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    border-radius: var(--semantic-border-radius-full);
+    font-size: var(--pliego-t-ui);
+    text-decoration: none;
+  }
+
+  .pliego-temas__lista a:hover {
+    border-color: var(--pliego-tinta);
+  }
+
+  .pliego-autora {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-autora__nombre {
+    margin-block-end: 0.25rem;
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 1.125rem;
+    font-weight: var(--pliego-titular-peso);
+    color: var(--pliego-tinta);
+  }
+
+  .pliego-relacionadas {
+    max-inline-size: var(--pliego-ancho);
+    inline-size: 100%;
+    margin-inline: auto;
+    padding-inline: var(--pliego-margen);
+  }
+
+  /* ── Pie ──────────────────────────────────────────────────────────────── */
+  .pliego-pie {
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    padding-inline: var(--pliego-margen);
+    padding-block: 2.5rem calc(2.5rem + env(safe-area-inset-bottom, 0px));
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-regla-fuerte);
+    background: var(--pliego-papel-hundido);
+    color: var(--pliego-tinta-suave);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+    text-align: center;
+  }
+
+  .pliego-pie__marca {
+    font-family: var(--pliego-fuente-marca);
+    font-stretch: var(--pliego-marca-ancho);
+    font-variation-settings: var(--pliego-marca-ejes);
+    font-size: 2rem;
+    font-weight: var(--pliego-marca-peso);
+    font-style: var(--pliego-marca-estilo);
+    text-transform: var(--pliego-marca-caja);
+    letter-spacing: var(--pliego-marca-espaciado);
+    color: var(--pliego-tinta);
+  }
+
+  .pliego-pie__lista {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Objetivo táctil de al menos 24 px (WCAG 2.5.8) */
+  .pliego-pie__lista a {
+    display: inline-block;
+    padding-block: 0.3125rem;
+  }
+
+  .pliego-pie__nota {
+    max-inline-size: 38rem;
+    color: var(--pliego-tinta-tenue);
+  }
+
+  .pliego-pie__credito {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-tenue);
+  }
+
+  /* ── Tablet ───────────────────────────────────────────────────────────── */
+  @media (min-width: 48rem) {
+    .pliego-lectura {
+      inset: 4.5rem var(--pliego-margen) auto auto;
+      inline-size: 27rem;
+      border: var(--pliego-grosor-regla) solid var(--pliego-regla);
+      border-radius: var(--semantic-border-radius-xl);
+      padding: 1.5rem;
+    }
+
+    /* Las secciones nunca parten en dos filas: si no caben, se desplazan */
+    .pliego-ultima__lista {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .pliego-ultima__item {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.125rem;
+    }
+  }
+
+  /* ── Movimiento: transiciones con duraciones de SYX y salida reducida ─── */
+  @media (prefers-reduced-motion: no-preference) {
+    .pliego-lectura {
+      transition:
+        opacity var(--semantic-duration-base) var(--semantic-easing-out),
+        translate var(--semantic-duration-base) var(--semantic-easing-out),
+        overlay var(--semantic-duration-base) allow-discrete,
+        display var(--semantic-duration-base) allow-discrete;
+    }
+
+    .pliego-lectura:not(:popover-open) {
+      opacity: 0;
+      translate: 0 1rem;
+    }
+
+    @starting-style {
+      .pliego-lectura:popover-open {
+        opacity: 0;
+        translate: 0 1rem;
+      }
+    }
+
+    .pliego-teaser__media img {
+      transition: scale var(--semantic-duration-slow) var(--semantic-easing-out);
+    }
+
+    .pliego-teaser:hover .pliego-teaser__media img {
+      scale: 1.03;
+    }
+
+    /* El cambio de modo funde papel y tinta en lugar de saltar */
+    body.pliego-pagina {
+      transition:
+        background-color var(--semantic-duration-slow) var(--semantic-easing-standard),
+        color var(--semantic-duration-slow) var(--semantic-easing-standard);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pliego-lectura,
+    .pliego-teaser__media img,
+    body.pliego-pagina {
+      transition: none;
+    }
+  }
+
+  /* Colores forzados: las reglas y la barra de datos se mantienen visibles */
+  @media (forced-colors: active) {
+    .pliego-barra::before { background: CanvasText; }
+    .pliego-claves,
+    .pliego-boletin { border: 1px solid CanvasText; }
+  }
+}

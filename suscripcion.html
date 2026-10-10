@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Suscríbete · Pliego</title>
+<meta name="description" content="Pliego, periódico independiente de la mañana. Cuotas de suscripción: cuanto más apoyas, menos publicidad ves.">
+<script>
+/* Arranque: aplica modo de lectura, cuota y mapa guardados antes del primer pintado (sin parpadeo). */
+(function () {
+  var d = document.documentElement, modo = 'diario', tema = null, cuota = 'abierto', mapa = null;
+  try {
+    modo = localStorage.getItem('pliego:lectura') || modo;
+    tema = localStorage.getItem('pliego:apariencia');
+    cuota = localStorage.getItem('pliego:cuota') || cuota;
+    mapa = localStorage.getItem('pliego:mapa');
+  } catch (e) {}
+  d.setAttribute('data-lectura', modo);
+  d.setAttribute('data-cuota', cuota);
+  if (mapa === 'si') d.setAttribute('data-mapa-pub', '');
+  if (tema === 'light' || tema === 'dark') d.setAttribute('data-theme', tema);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wdth,wght,GRAD@0,8..144,50..150,100..900,-50..100;1,8..144,50..150,100..900,-50..100&amp;display=swap">
+<link rel="stylesheet" href="syx/css/styles-theme-example-01.css">
+<link rel="stylesheet" href="css/pliego.css">
+<link rel="stylesheet" href="css/lectura/diario.css">
+<link rel="stylesheet" href="css/lectura/facil.css">
+<link rel="stylesheet" href="css/lectura/reportaje.css">
+<link rel="stylesheet" href="css/lectura/edicion.css">
+<link rel="stylesheet" href="css/lectura/expres.css">
+<link rel="stylesheet" href="css/lectura/contexto.css">
+<link rel="stylesheet" href="css/lectura/escucha.css">
+<link rel="stylesheet" href="css/pliego-publicidad.css">
+<link rel="stylesheet" href="css/pliego-acabados.css">
+<link rel="stylesheet" href="css/pliego-demo.css">
+<link rel="stylesheet" href="css/pliego-adaptaciones.css">
+<link rel="stylesheet" href="css/pliego-planes.css">
+<script src="js/pliego-lectura.js" defer></script>
+</head>
+<body class="pliego-pagina pliego-pagina--planes">
+
+<a class="syx-skip-link" href="#contenido">Saltar al contenido</a>
+
+<aside class="pliego-demo" aria-label="Controles de la demostración">
+  <form class="pliego-demo__formulario" id="form-demo">
+    <p class="pliego-demo__titulo">Demostración</p>
+      <fieldset class="pliego-demo__grupo" aria-labelledby="demo-leyenda-cuota">
+        <span class="pliego-demo__leyenda" id="demo-leyenda-cuota">Cuota</span>
+        <div class="pliego-demo__segmentos">
+        <label class="pliego-demo__opcion" for="demo-cuota-abierto"><input class="pliego-demo__input" type="radio" name="cuota" id="demo-cuota-abierto" value="abierto"><span>Abierto</span></label>
+        <label class="pliego-demo__opcion" for="demo-cuota-lector"><input class="pliego-demo__input" type="radio" name="cuota" id="demo-cuota-lector" value="lector"><span>Lector</span></label>
+        <label class="pliego-demo__opcion" for="demo-cuota-habitual"><input class="pliego-demo__input" type="radio" name="cuota" id="demo-cuota-habitual" value="habitual"><span>Habitual</span></label>
+        <label class="pliego-demo__opcion" for="demo-cuota-mecenas"><input class="pliego-demo__input" type="radio" name="cuota" id="demo-cuota-mecenas" value="mecenas"><span>Mecenas</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="pliego-demo__grupo" aria-labelledby="demo-leyenda-modo">
+        <span class="pliego-demo__leyenda" id="demo-leyenda-modo">Modo</span>
+        <div class="pliego-demo__segmentos">
+        <label class="pliego-demo__opcion" for="demo-lectura-diario"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-diario" value="diario"><span>Diario</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-facil"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-facil" value="facil"><span>Fácil</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-reportaje"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-reportaje" value="reportaje"><span>Reportaje</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-edicion"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-edicion" value="edicion"><span>Edición</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-expres"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-expres" value="expres"><span>Exprés</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-contexto"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-contexto" value="contexto"><span>Contexto</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-escucha"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-escucha" value="escucha"><span>Escucha</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="pliego-demo__grupo" aria-labelledby="demo-leyenda-tema">
+        <span class="pliego-demo__leyenda" id="demo-leyenda-tema">Tema</span>
+        <div class="pliego-demo__segmentos">
+        <label class="pliego-demo__opcion" for="demo-apariencia-auto"><input class="pliego-demo__input" type="radio" name="apariencia" id="demo-apariencia-auto" value="auto"><span>Auto</span></label>
+        <label class="pliego-demo__opcion" for="demo-apariencia-light"><input class="pliego-demo__input" type="radio" name="apariencia" id="demo-apariencia-light" value="light"><span>Claro</span></label>
+        <label class="pliego-demo__opcion" for="demo-apariencia-dark"><input class="pliego-demo__input" type="radio" name="apariencia" id="demo-apariencia-dark" value="dark"><span>Oscuro</span></label>
+        </div>
+      </fieldset>
+    <label class="atom-switch pliego-demo__mapa" for="demo-mapa">
+      <input class="atom-switch__input" type="checkbox" role="switch" id="demo-mapa" name="mapa">
+      <span class="atom-switch__slider" aria-hidden="true"></span>
+      <span class="atom-switch__label">Mapa de publicidad</span>
+    </label>
+  </form>
+</aside>
+
+<header class="pliego-cabecera">
+  <div class="pliego-cabecera__barra">
+    <p class="pliego-cabecera__edicion">
+      <time datetime="2026-10-10">Sábado, 10 de octubre de 2026</time>
+      <span class="pliego-cabecera__numero">Año IX · N.º 3.214</span>
+      <span class="pliego-cabecera__cuota" data-para="lector">Suscripción Lector</span>
+      <span class="pliego-cabecera__cuota" data-para="habitual">Suscripción Habitual</span>
+      <span class="pliego-cabecera__cuota" data-para="mecenas">Edición para mecenas</span>
+    </p>
+    <div class="pliego-cabecera__acciones">
+      <button class="atom-btn atom-btn--primary atom-btn--size-sm atom-btn--has-icon pliego-cabecera__lectura" type="button" popovertarget="panel-lectura">
+        <span class="atom-icon atom-icon--lc-book-open" aria-hidden="true"></span>
+        <span class="pliego-modo-actual">Lectura</span>
+      </button>
+      <a class="atom-btn atom-btn--primary atom-btn--filled atom-btn--size-sm pliego-cabecera__suscribir" href="suscripcion.html" data-para="abierto">Suscríbete</a>
+      <a class="atom-btn atom-btn--primary atom-btn--size-sm pliego-cabecera__suscribir" href="suscripcion.html" data-para="lector habitual">Menos anuncios</a>
+      <p class="pliego-insignia" data-para="mecenas">Mecenas <span>· sin publicidad</span></p>
+    </div>
+  </div>
+  <p class="pliego-cabecera__marca"><a href="index.html">Pliego</a></p>
+  <p class="pliego-cabecera__lema">Periódico independiente de la mañana</p>
+  <nav class="pliego-secciones" aria-label="Secciones">
+    <ul class="pliego-secciones__lista">
+      <li><a href="index.html">Portada</a></li>
+      <li><a href="index.html#t-destacadas">España</a></li>
+      <li><a href="index.html#t-destacadas">Internacional</a></li>
+      <li><a href="index.html#t-destacadas">Economía</a></li>
+      <li><a href="index.html#t-opinion">Opinión</a></li>
+      <li><a href="articulo.html">Sociedad</a></li>
+      <li><a href="index.html#t-ciencia">Ciencia</a></li>
+      <li><a href="index.html#t-profundidad">Cultura</a></li>
+      <li><a href="index.html#t-destacadas">Deportes</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div id="panel-lectura" class="pliego-lectura" popover role="dialog" aria-labelledby="panel-lectura-titulo">
+  <form class="pliego-lectura__formulario" id="form-lectura">
+    <div class="pliego-lectura__cabecera">
+      <h2 class="pliego-lectura__titulo" id="panel-lectura-titulo">Modo de lectura</h2>
+      <button class="atom-btn atom-btn--tertiary atom-btn--circle atom-btn--size-sm" type="button" popovertarget="panel-lectura" popovertargetaction="hide" aria-label="Cerrar">
+        <span class="atom-icon atom-icon--lc-x" aria-hidden="true"></span>
+      </button>
+    </div>
+    <p class="pliego-lectura__ayuda">Cambia cómo se ve el periódico. El texto es el mismo; cambia la forma de leerlo.</p>
+    <fieldset class="pliego-lectura__grupo">
+      <legend class="pliego-lectura__leyenda">Cómo quieres leer</legend>
+      <div class="pliego-opcion pliego-opcion--diario">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-diario">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-diario" value="diario" aria-describedby="nota-diario">
+          <span class="atom-radio__label">Diario</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-diario">La edición de siempre, ordenada por importancia.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--facil">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-facil">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-facil" value="facil" aria-describedby="nota-facil">
+          <span class="atom-radio__label">Fácil</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-facil">Letra grande, frases cortas y un solo camino.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--reportaje">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-reportaje">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-reportaje" value="reportaje" aria-describedby="nota-reportaje">
+          <span class="atom-radio__label">Reportaje</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-reportaje">Imagen a sangre y ritmo de revista.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--edicion">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-edicion">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-edicion" value="edicion" aria-describedby="nota-edicion">
+          <span class="atom-radio__label">Edición</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-edicion">Composición de imprenta, notas al margen.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--expres">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-expres">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-expres" value="expres" aria-describedby="nota-expres">
+          <span class="atom-radio__label">Exprés</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-expres">Titulares, claves y lo esencial de cada parte.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--contexto">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-contexto">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-contexto" value="contexto" aria-describedby="nota-contexto">
+          <span class="atom-radio__label">Contexto</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-contexto">Antecedentes, cronología y datos antes de la historia.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--escucha">
+        <span class="pliego-opcion__muestra" aria-hidden="true"></span>
+        <label class="atom-radio" for="lectura-escucha">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-escucha" value="escucha" aria-describedby="nota-escucha">
+          <span class="atom-radio__label">Escucha</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-escucha"><span class="pliego-opcion__sello">Mecenas</span> El artículo, leído en voz alta. Solo para Mecenas.</span>
+      </div>
+    </fieldset>
+    <fieldset class="pliego-lectura__grupo pliego-lectura__grupo--apariencia">
+      <legend class="pliego-lectura__leyenda">Apariencia</legend>
+      <label class="atom-radio" for="apariencia-auto">
+        <input class="atom-radio__input" type="radio" name="apariencia" id="apariencia-auto" value="auto">
+        <span class="atom-radio__label">Automática</span>
+      </label>
+      <label class="atom-radio" for="apariencia-clara">
+        <input class="atom-radio__input" type="radio" name="apariencia" id="apariencia-clara" value="light">
+        <span class="atom-radio__label">Clara</span>
+      </label>
+      <label class="atom-radio" for="apariencia-oscura">
+        <input class="atom-radio__input" type="radio" name="apariencia" id="apariencia-oscura" value="dark">
+        <span class="atom-radio__label">Oscura</span>
+      </label>
+    </fieldset>
+  </form>
+</div>
+<p class="syx-sr-only" role="status" id="lectura-estado"></p>
+
+
+<main id="contenido" class="pliego-planes">
+
+  <header class="pliego-planes__cabecera">
+    <p class="pliego-planes__cintillo">Suscripción</p>
+    <h1 class="pliego-planes__titulo">Cuanto más nos apoyas, menos publicidad ves</h1>
+    <p class="pliego-planes__entradilla">Pliego se sostiene con dos ingresos: tu cuota y la publicidad. Cada cuota sustituye una parte de los anuncios, empezando por los más molestos, y cuida un poco más cómo se ve el periódico. Con Mecenas desaparecen todos.</p>
+    <fieldset class="pliego-facturacion">
+      <legend class="pliego-facturacion__leyenda">Cómo quieres pagar</legend>
+      <label class="atom-radio" for="facturacion-mensual">
+        <input class="atom-radio__input" type="radio" name="facturacion" id="facturacion-mensual" value="mensual" checked>
+        <span class="atom-radio__label">Cada mes</span>
+      </label>
+      <label class="atom-radio" for="facturacion-anual">
+        <input class="atom-radio__input" type="radio" name="facturacion" id="facturacion-anual" value="anual">
+        <span class="atom-radio__label">Cada año · dos meses gratis</span>
+      </label>
+    </fieldset>
+  </header>
+
+  <ol class="pliego-planes__lista" aria-label="Cuotas de suscripción">
+    <li class="pliego-plan">
+      <article class="mol-card pliego-plan__tarjeta" aria-labelledby="plan-abierto">
+        <div class="mol-card__header">
+          <h2 class="mol-card__title pliego-plan__nombre" id="plan-abierto">Abierto</h2>
+        </div>
+        <div class="mol-card__body">
+          <p class="pliego-plan__precio"><strong>0 €</strong> <span>siempre</span></p>
+          <p class="pliego-plan__nivel">Publicidad <strong>completa</strong> <span class="pliego-escala" style="--pliego-nivel: 4" role="img" aria-label="Nivel de publicidad: 4 de 4"></span></p>
+          <ul class="pliego-lista pliego-plan__ventajas">
+            <li>Todas las noticias de portada y el boletín de la mañana</li>
+            <li>Banners, vídeo sin sonido y anclaje inferior con cierre</li>
+            <li>Nunca formatos que tapen la lectura o suenen solos</li>
+          </ul>
+        </div>
+        <div class="mol-card__footer">
+          <button class="atom-btn atom-btn--primary" type="button" data-accion="elegir-cuota" data-cuota="abierto">Seguir con Abierto</button>
+        </div>
+      </article>
+    </li>
+    <li class="pliego-plan">
+      <article class="mol-card pliego-plan__tarjeta" aria-labelledby="plan-lector">
+        <div class="mol-card__header">
+          <h2 class="mol-card__title pliego-plan__nombre" id="plan-lector">Lector</h2>
+        </div>
+        <div class="mol-card__body">
+          <p class="pliego-plan__precio pliego-plan__precio--mensual"><strong>4,99 €</strong> <span>al mes</span></p>
+          <p class="pliego-plan__precio pliego-plan__precio--anual"><strong>49 €</strong> <span>al año</span></p>
+          <p class="pliego-plan__nivel">Publicidad <strong>ligera</strong> <span class="pliego-escala" style="--pliego-nivel: 2" role="img" aria-label="Nivel de publicidad: 2 de 4"></span></p>
+          <ul class="pliego-lista pliego-plan__ventajas">
+            <li>Sin vídeo, sin piel y sin anclaje inferior</li>
+            <li>La mitad de banners, más pequeños y ninguno fijo en pantalla</li>
+            <li>Guardar para luego en todos tus dispositivos</li>
+            <li>Más aire entre bloques y filetes en lacre</li>
+          </ul>
+        </div>
+        <div class="mol-card__footer">
+          <button class="atom-btn atom-btn--primary atom-btn--filled" type="button" data-accion="elegir-cuota" data-cuota="lector">Elegir Lector</button>
+        </div>
+      </article>
+    </li>
+    <li class="pliego-plan pliego-plan--destacado">
+      <article class="mol-card pliego-plan__tarjeta" aria-labelledby="plan-habitual">
+        <div class="mol-card__header">
+          <h2 class="mol-card__title pliego-plan__nombre" id="plan-habitual">Habitual</h2>
+        </div>
+        <div class="mol-card__body">
+          <p class="pliego-plan__distintivo">La más elegida</p>
+          <p class="pliego-plan__precio pliego-plan__precio--mensual"><strong>8,99 €</strong> <span>al mes</span></p>
+          <p class="pliego-plan__precio pliego-plan__precio--anual"><strong>89 €</strong> <span>al año</span></p>
+          <p class="pliego-plan__nivel">Publicidad <strong>mínima</strong> <span class="pliego-escala" style="--pliego-nivel: 1" role="img" aria-label="Nivel de publicidad: 1 de 4"></span></p>
+          <ul class="pliego-lista pliego-plan__ventajas">
+            <li>Ningún banner: solo piezas patrocinadas, marcadas y con el estilo del periódico</li>
+            <li>Archivo completo desde 2017</li>
+            <li>Boletín de fin de semana con lo mejor de la redacción</li>
+            <li>Capitulares y títulos en cursiva de cartel</li>
+          </ul>
+        </div>
+        <div class="mol-card__footer">
+          <button class="atom-btn atom-btn--primary atom-btn--filled" type="button" data-accion="elegir-cuota" data-cuota="habitual">Elegir Habitual</button>
+        </div>
+      </article>
+    </li>
+    <li class="pliego-plan">
+      <article class="mol-card pliego-plan__tarjeta" aria-labelledby="plan-mecenas">
+        <div class="mol-card__header">
+          <h2 class="mol-card__title pliego-plan__nombre" id="plan-mecenas">Mecenas</h2>
+        </div>
+        <div class="mol-card__body">
+          <p class="pliego-plan__precio pliego-plan__precio--mensual"><strong>14,99 €</strong> <span>al mes</span></p>
+          <p class="pliego-plan__precio pliego-plan__precio--anual"><strong>149 €</strong> <span>al año</span></p>
+          <p class="pliego-plan__nivel">Publicidad <strong>ninguna</strong> <span class="pliego-escala" style="--pliego-nivel: 0" role="img" aria-label="Nivel de publicidad: 0 de 4"></span></p>
+          <ul class="pliego-lista pliego-plan__ventajas">
+            <li>Sin publicidad en ninguna página</li>
+            <li>Todo lo de Habitual, para ti y una persona más</li>
+            <li>Encuentros trimestrales con la redacción</li>
+            <li>Modo Escucha: cada artículo leído en voz alta, por capítulos</li>
+            <li>Edición para mecenas: cabecera expandida, oro y papel con grano</li>
+          </ul>
+        </div>
+        <div class="mol-card__footer">
+          <button class="atom-btn atom-btn--primary atom-btn--filled" type="button" data-accion="elegir-cuota" data-cuota="mecenas">Elegir Mecenas</button>
+        </div>
+      </article>
+    </li>
+  </ol>
+  <p class="pliego-planes__estado" id="planes-estado" role="status"></p>
+  <p class="pliego-planes__nota">Precios ficticios de demostración, IVA incluido. Al elegir una cuota se simula la suscripción en este navegador para que veas la diferencia en la portada y en el artículo.</p>
+
+  <section class="pliego-planes__seccion" aria-labelledby="t-comparativa">
+    <h2 class="pliego-planes__subtitulo" id="t-comparativa">Qué publicidad y qué acabado tienes con cada cuota</h2>
+    <div class="atom-table__container pliego-planes__tabla" role="region" aria-label="Comparativa de formatos publicitarios por cuota" tabindex="0">
+      <table class="atom-table">
+        <thead>
+          <tr>
+            <th class="atom-table__th" scope="col">Formato</th>
+            <th class="atom-table__th" scope="col">Abierto</th>
+            <th class="atom-table__th" scope="col">Lector</th>
+            <th class="atom-table__th" scope="col">Habitual</th>
+            <th class="atom-table__th" scope="col">Mecenas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th class="atom-table__th" scope="row">Billboard bajo la cabecera</th><td class="atom-table__td">Sí, 970 × 250</td><td class="atom-table__td">Más pequeño, 728 × 90</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Media página lateral</th><td class="atom-table__td">Sí, acompaña el scroll</td><td class="atom-table__td">Sí, sin fijar</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Billboard entre bloques</th><td class="atom-table__td">Sí</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Robapáginas entre párrafos</th><td class="atom-table__td">Dos por artículo</td><td class="atom-table__td">Uno por artículo</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Vídeo outstream</th><td class="atom-table__td">Sí, sin sonido</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Anclaje inferior</th><td class="atom-table__td">Sí, con cierre</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Piel de página</th><td class="atom-table__td">Solo en pantallas grandes</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Recomendaciones de terceros</th><td class="atom-table__td">Sí</td><td class="atom-table__td">Sí</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Pieza patrocinada marcada</th><td class="atom-table__td">Sí</td><td class="atom-table__td">Sí</td><td class="atom-table__td">Sí</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Patrocinio de sección</th><td class="atom-table__td">Sí</td><td class="atom-table__td">Sí</td><td class="atom-table__td">Sí</td><td class="atom-table__td">No</td></tr>
+          <tr><th class="atom-table__th" scope="row">Acabado de la interfaz</th><td class="atom-table__td">Esencial</td><td class="atom-table__td">Más aire, filetes en lacre</td><td class="atom-table__td">Capitulares, filete fino, títulos en cursiva de cartel</td><td class="atom-table__td">Cabecera expandida, oro, grano de papel, florones</td></tr>
+          <tr><th class="atom-table__th" scope="row">Modo Escucha</th><td class="atom-table__td">No</td><td class="atom-table__td">No</td><td class="atom-table__td">No</td><td class="atom-table__td">Sí</td></tr>
+          <tr class="pliego-planes__total"><th class="atom-table__th" scope="row">Anuncios en portada · en un artículo</th><td class="atom-table__td">6 · 7</td><td class="atom-table__td">4 · 4</td><td class="atom-table__td">2 · 1</td><td class="atom-table__td">0 · 0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pliego-planes__seccion pliego-planes__seccion--compromiso" aria-labelledby="t-nunca">
+    <h2 class="pliego-planes__subtitulo" id="t-nunca">Lo que no verás nunca en Pliego, pagues o no</h2>
+    <ul class="pliego-lista pliego-lista--nunca pliego-planes__nunca">
+      <li>Anuncios a pantalla completa antes de leer, ni con cuenta atrás</li>
+      <li>Ventanas emergentes</li>
+      <li>Vídeos que suenan solos</li>
+      <li>Anuncios fijos que tapen más del 30 % de la pantalla o que no se puedan cerrar</li>
+      <li>Publicidad con aspecto de noticia sin la etiqueta «Patrocinado» y el nombre de la marca</li>
+      <li>Anuncios que mueven el texto mientras lees: su espacio está reservado antes de cargar</li>
+    </ul>
+    <p class="pliego-planes__norma">Seguimos los formatos de IAB y los Better Ads Standards de la Coalition for Better Ads.</p>
+  </section>
+
+  <section class="pliego-planes__seccion" aria-labelledby="t-preguntas">
+    <h2 class="pliego-planes__subtitulo" id="t-preguntas">Preguntas frecuentes</h2>
+    <details class="mol-disclosure">
+      <summary class="mol-disclosure__summary">¿Los modos de lectura son de pago?</summary>
+      <div class="mol-disclosure__content"><p>Los seis modos para leer (Diario, Fácil, Reportaje, Edición, Exprés y Contexto) están en todas las cuotas, también en Abierto: leer mejor no debería depender de lo que pagas. El modo Escucha, que lee los artículos en voz alta, es parte de Mecenas.</p></div>
+    </details>
+    <details class="mol-disclosure">
+      <summary class="mol-disclosure__summary">¿Por qué no quitáis la publicidad a todo el mundo?</summary>
+      <div class="mol-disclosure__content"><p>Porque hoy la publicidad paga una parte de la redacción. Cada cuota sustituye una parte de ese ingreso, y por eso cada una retira una parte de los anuncios: primero los más molestos.</p></div>
+    </details>
+    <details class="mol-disclosure">
+      <summary class="mol-disclosure__summary">¿Puedo cambiar de cuota o darme de baja?</summary>
+      <div class="mol-disclosure__content"><p>Sí, cuando quieras y desde tu cuenta. El cambio se aplica al momento y la baja no tiene permanencia.</p></div>
+    </details>
+  </section>
+
+</main>
+
+<footer class="pliego-pie">
+  <p class="pliego-pie__marca">Pliego</p>
+  <nav class="pliego-pie__nav" aria-label="Sobre el periódico">
+    <ul class="pliego-pie__lista">
+      <li><a href="index.html">Quiénes somos</a></li>
+      <li><a href="index.html">Libro de estilo</a></li>
+      <li><a href="index.html">Fe de errores</a></li>
+      <li><a href="index.html">Accesibilidad</a></li>
+      <li><a href="index.html">Aviso legal</a></li>
+    </ul>
+  </nav>
+  <p class="pliego-pie__nota">Pliego es un periódico ficticio: personas, lugares y datos son inventados. Demostración de modos de lectura construida sobre el sistema de diseño SYX.</p>
+  <p class="pliego-recuento"><span class="pliego-recuento__cuota"></span> <span class="pliego-recuento__n"></span></p>
+  <p class="pliego-pie__credito">Diseñado y desarrollado por José Luis Pizarro</p>
+</footer>
+
+</body>
+</html>

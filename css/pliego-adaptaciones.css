@@ -1,0 +1,146 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLIEGO · adaptaciones automáticas
+   No son modos: el lector no las elige en Pliego, las pide su sistema o su
+   navegador. Funcionan con cualquier modo y cualquier cuota.
+   · Impresión          @media print
+   · Más contraste      @media (prefers-contrast: more)
+   · Ahorro de datos    @media (prefers-reduced-data: reduce)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+/* ── Más contraste: tinta a tope, filetes visibles, lacre más oscuro ──── */
+@media (prefers-contrast: more) {
+  :root:root {
+    --semantic-color-text-secondary: light-dark(var(--pliego-tinta-claro), var(--pliego-tinta-oscuro));
+    --semantic-color-text-tertiary: light-dark(oklch(from var(--pliego-tinta-claro) calc(l + 0.08) c h), oklch(from var(--pliego-tinta-oscuro) calc(l - 0.06) c h));
+    --semantic-color-border-default: light-dark(oklch(from var(--pliego-tinta-claro) 0.45 c h), oklch(from var(--pliego-tinta-oscuro) 0.7 c h));
+    --semantic-color-border-subtle: light-dark(oklch(from var(--pliego-tinta-claro) 0.6 c h), oklch(from var(--pliego-tinta-oscuro) 0.55 c h));
+    --semantic-color-primary-text: light-dark(oklch(from var(--pliego-lacre-claro) calc(l - 0.12) c h), oklch(from var(--pliego-lacre-oscuro) calc(l + 0.1) c h));
+    --pliego-grado: 40;
+    --pliego-grosor-regla: 1.5px;
+  }
+
+  @layer syx.app {
+    .pliego-pagina :is(p, li) a:not([class*="atom-"]),
+    .pliego-teaser__enlace {
+      text-decoration: underline;
+      text-underline-offset: 0.18em;
+    }
+
+    .pliego-pagina img { filter: none; }
+  }
+}
+
+/* ── Ahorro de datos: ni ilustraciones ni creatividades, solo su hueco ── */
+@media (prefers-reduced-data: reduce) {
+  @layer syx.app {
+    .pliego-teaser__media,
+    .pliego-figura--ancha,
+    .pliego-pub--piel,
+    .pliego-pub--video,
+    .pliego-recomendaciones__lista img {
+      display: none;
+    }
+
+    .pliego-pub__creatividad img {
+      visibility: hidden;
+    }
+  }
+
+  :root {
+    --pliego-grano: none;
+  }
+}
+
+/* ── Impresión: el artículo, limpio ─────────────────────────────────── */
+@media print {
+  :root:root {
+    color-scheme: light;
+    --pliego-papel-oscuro: var(--pliego-papel-claro);
+    --pliego-tinta-oscuro: var(--pliego-tinta-claro);
+    --pliego-lacre-oscuro: var(--pliego-lacre-claro);
+    --pliego-grano: none;
+    --pliego-grado: 0;
+  }
+
+  @layer syx.app {
+    @page {
+      margin: 18mm 16mm;
+    }
+
+    /* Fuera todo lo que no es el texto */
+    .pliego-demo,
+    .syx-skip-link,
+    .pliego-cabecera__barra,
+    .pliego-cabecera__lema,
+    .pliego-secciones,
+    .pliego-lectura,
+    .pliego-progreso,
+    .pliego-ruta,
+    .pliego-compartir,
+    .pliego-pub,
+    .pliego-franja-pub,
+    .pliego-mejora,
+    .pliego-relacionadas,
+    .pliego-recomendaciones,
+    .pliego-escucha,
+    .pliego-escucha-bloqueo,
+    .pliego-boletin,
+    .pliego-pie__nav,
+    .pliego-recuento {
+      display: none;
+    }
+
+    body.pliego-pagina {
+      background: none;
+      color: var(--pliego-tinta);
+      font-size: 11pt;
+      padding: 0;
+    }
+
+    .pliego-cabecera {
+      display: block;
+      padding: 0 0 6mm;
+      border-block-end: 0.5pt solid var(--pliego-tinta);
+      text-align: start;
+    }
+
+    .pliego-cabecera__marca { font-size: 20pt; }
+
+    /* El artículo vuelve a una sola columna de libro */
+    .pliego-articulo {
+      grid-template-columns: [sangre-start ancho-start texto-start margen-start] minmax(0, 1fr) [sangre-end ancho-end texto-end margen-end];
+    }
+
+    .pliego-articulo__titulo { font-size: 24pt; }
+    .pliego-capitulo > p { font-size: 11pt; line-height: 1.5; orphans: 3; widows: 3; }
+    .pliego-capitulo__titulo { break-after: avoid; }
+    .pliego-cita,
+    .pliego-figura,
+    .pliego-ficha,
+    .pliego-claves { break-inside: avoid; }
+
+    .pliego-figura img { max-block-size: 90mm; }
+
+    /* Lo plegado, desplegado */
+    details::details-content { content-visibility: visible; block-size: auto; }
+    .mol-disclosure { --component-disclosure-summary-font-weight: var(--semantic-font-weight-bold); }
+
+    /* Las direcciones de los enlaces del texto, escritas */
+    .pliego-capitulo a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; }
+
+    .pliego-articulo__pie::after {
+      content: "Impreso desde Pliego";
+      grid-column: texto;
+      font-size: 8pt;
+      color: var(--pliego-tinta-tenue);
+    }
+
+    .pliego-pie {
+      padding: 4mm 0 0;
+      background: none;
+      border: 0;
+    }
+  }
+}

@@ -1,0 +1,173 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODO CONTEXTO · entender antes de leer
+   Para quién: quien llega a una noticia sin conocer los antecedentes.
+   Gesto: el artículo se reordena para que lo primero sean las claves, la
+   cronología, los datos y las explicaciones; los desplegables se abren solos,
+   las siglas se escriben enteras y los términos definidos se marcan. Todo sale
+   de marcado semántico que ya existe (<dfn>, <abbr>, <details>, <aside>, <ol>).
+   Cómo: cuerpo y capítulos pasan a display: contents, así sus hijos son
+   elementos de la rejilla del artículo y `order` puede subirlos al principio.
+   Color: los mínimos; los bloques de contexto van sobre el tono suave del lacre.
+   Voz: titular 560 / anchura 96 %; las etiquetas, en la voz de interfaz.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+:root[data-lectura="contexto"] {
+  --pliego-modo-nombre: "Contexto";
+
+  --pliego-contexto-fondo: var(--semantic-color-tone-primary-subtle-bg);
+  --pliego-contexto-borde: var(--semantic-color-primary);
+
+  --pliego-titular-peso: 560;
+  --pliego-titular-ancho: 96%;
+  --pliego-texto-tamano: 1.125rem;
+  --pliego-texto-interlineado: 1.65;
+
+  /* Portada: lista con miniatura y entradilla siempre visible */
+  --pliego-teaser-areas: "cuerpo media";
+  --pliego-teaser-columnas: minmax(0, 1fr) 6.5rem;
+  --pliego-img-proporcion: 1;
+  --pliego-ver-entradilla: block;
+}
+
+@media (min-width: 48rem) {
+  :root[data-lectura="contexto"] {
+    --pliego-teaser-columnas: minmax(0, 1fr) 9rem;
+    --pliego-rejilla-min: 22rem;
+    --pliego-portada-columnas: repeat(2, minmax(0, 1fr));
+    --pliego-portada-areas:
+      "ultima ultima"
+      "apertura apertura"
+      "destacadas destacadas"
+      "leido lateral"
+      "opinion opinion"
+      "pubmedio pubmedio"
+      "profundidad profundidad"
+      "mejora mejora"
+      "ciencia ciencia"
+      "boletin boletin";
+  }
+}
+
+@layer syx.app {
+  /* ── Artículo: el contexto sube ── */
+  :root[data-lectura="contexto"] .pliego-articulo .pliego-articulo__cuerpo,
+  :root[data-lectura="contexto"] .pliego-articulo__cuerpo .pliego-capitulo {
+    display: contents;
+  }
+
+  :root[data-lectura="contexto"] .pliego-articulo {
+    row-gap: var(--pliego-parrafo-espacio);
+  }
+
+  :root[data-lectura="contexto"] .pliego-articulo__cabecera { order: -20; margin-block-end: var(--pliego-hueco); }
+  :root[data-lectura="contexto"] .pliego-articulo > .pliego-figura--portada { order: -19; }
+  :root[data-lectura="contexto"] .pliego-claves { order: -18; margin-block-start: var(--pliego-hueco); }
+  :root[data-lectura="contexto"] .pliego-cronologia { order: -17; }
+  :root[data-lectura="contexto"] .pliego-capitulo > .pliego-ficha { order: -16; }
+  :root[data-lectura="contexto"] .pliego-contexto { order: -15; }
+  :root[data-lectura="contexto"] .pliego-capitulo > .pliego-nota { order: -14; }
+  :root[data-lectura="contexto"] .pliego-articulo__pie { order: 1; margin-block-start: var(--pliego-hueco-bloque); }
+
+  /* Separador entre el contexto y la historia */
+  :root[data-lectura="contexto"] .pliego-capitulo:first-child > .pliego-capitulo__titulo::before {
+    content: "La historia";
+    display: block;
+    margin-block: var(--pliego-hueco-bloque) 1rem;
+    padding-block-start: 0.75rem;
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-regla-fuerte);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-bloque);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    color: var(--pliego-tinta);
+  }
+
+  :root[data-lectura="contexto"] .pliego-capitulo__titulo {
+    margin-block-start: 1.5rem;
+  }
+
+  /* Bloques de contexto: misma familia de caja */
+  :root[data-lectura="contexto"] :is(.pliego-claves, .pliego-cronologia, .pliego-capitulo > .pliego-ficha, .pliego-contexto, .pliego-capitulo > .pliego-nota) {
+    padding: 1rem 1.25rem;
+    border: 0;
+    border-inline-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-contexto-borde);
+    border-radius: var(--pliego-radio);
+    background: var(--pliego-contexto-fondo);
+  }
+
+  :root[data-lectura="contexto"] .pliego-cronologia::before,
+  :root[data-lectura="contexto"] .pliego-capitulo > .pliego-nota::before {
+    display: block;
+    margin-block-end: 0.5rem;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-size: var(--pliego-t-bloque);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    color: var(--pliego-tinta);
+  }
+
+  :root[data-lectura="contexto"] .pliego-cronologia::before { content: "Cronología"; }
+  :root[data-lectura="contexto"] .pliego-capitulo > .pliego-nota::before { content: "Para entenderlo"; }
+
+  :root[data-lectura="contexto"] .pliego-cronologia__item:last-child {
+    border-block-end: 0;
+  }
+
+  :root[data-lectura="contexto"] .pliego-capitulo > .pliego-nota {
+    color: var(--pliego-tinta);
+    font-size: var(--pliego-t-secundario);
+  }
+
+  /* Desplegables abiertos y con su pregunta como título */
+  :root[data-lectura="contexto"] .pliego-contexto::details-content,
+  :root[data-lectura="contexto"] .pliego-metodo::details-content {
+    content-visibility: visible;
+    block-size: auto;
+  }
+
+  /* El resumen del desplegable, en negrita: por token de mol-disclosure */
+  :root[data-lectura="contexto"] .pliego-contexto {
+    --component-disclosure-summary-font-weight: var(--semantic-font-weight-bold);
+    --component-disclosure-summary-padding-block: 0;
+  }
+
+  /* Siglas enteras y términos definidos marcados */
+  :root[data-lectura="contexto"] .pliego-articulo abbr[title] {
+    text-decoration: none;
+    cursor: auto;
+  }
+
+  :root[data-lectura="contexto"] .pliego-articulo abbr[title]::after {
+    content: " (" attr(title) ")";
+    color: var(--pliego-tinta-suave);
+  }
+
+  :root[data-lectura="contexto"] .pliego-articulo dfn {
+    padding-inline: 0.15em;
+    background: var(--pliego-contexto-fondo);
+    box-shadow: inset 0 -0.12em 0 var(--pliego-contexto-borde);
+    font-style: normal;
+    font-weight: var(--semantic-font-weight-medium);
+  }
+
+  /* El resumen fácil no hace falta aquí: ya hay claves */
+  :root[data-lectura="contexto"] .pliego-facil {
+    display: none;
+  }
+}
+
+.pliego-opcion--contexto {
+  --pliego-muestra-papel: var(--semantic-color-tone-primary-subtle-bg);
+  --pliego-muestra-tinta: var(--semantic-color-text-primary);
+  --pliego-muestra-acento: var(--semantic-color-primary);
+  --pliego-muestra-peso: 560;
+  --pliego-muestra-ancho: 96%;
+  --pliego-muestra-estilo: normal;
+}

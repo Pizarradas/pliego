@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pliego · Portada</title>
+<meta name="description" content="Pliego, periódico independiente de la mañana. Portada con cinco modos de lectura construidos sobre SYX.">
+<script>
+/* Arranque: aplica modo de lectura, cuota y mapa guardados antes del primer pintado (sin parpadeo). */
+(function () {
+  var d = document.documentElement, modo = 'diario', tema = null, cuota = 'abierto', mapa = null;
+  try {
+    modo = localStorage.getItem('pliego:lectura') || modo;
+    tema = localStorage.getItem('pliego:apariencia');
+    cuota = localStorage.getItem('pliego:cuota') || cuota;
+    mapa = localStorage.getItem('pliego:mapa');
+  } catch (e) {}
+  d.setAttribute('data-lectura', modo);
+  d.setAttribute('data-cuota', cuota);
+  if (mapa === 'si') d.setAttribute('data-mapa-pub', '');
+  if (tema === 'light' || tema === 'dark') d.setAttribute('data-theme', tema);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wdth,wght,GRAD@0,8..144,50..150,100..900,-50..100;1,8..144,50..150,100..900,-50..100&amp;display=swap">
+<link rel="stylesheet" href="syx/css/styles-theme-example-01.css">
+<link rel="stylesheet" href="css/pliego.css">
+<link rel="stylesheet" href="css/lectura/diario.css">
+<link rel="stylesheet" href="css/lectura/facil.css">
+<link rel="stylesheet" href="css/lectura/reportaje.css">
+<link rel="stylesheet" href="css/lectura/edicion.css">
+<link rel="stylesheet" href="css/lectura/expres.css">
+<link rel="stylesheet" href="css/lectura/contexto.css">
+<link rel="stylesheet" href="css/lectura/escucha.css">
+<link rel="stylesheet" href="css/pliego-publicidad.css">
+<link rel="stylesheet" href="css/pliego-acabados.css">
+<link rel="stylesheet" href="css/pliego-demo.css">
+<link rel="stylesheet" href="css/pliego-adaptaciones.css">
+<script src="js/pliego-lectura.js" defer></script>
+</head>
+<body class="pliego-pagina pliego-pagina--portada">
+
+<a class="syx-skip-link" href="#contenido">Saltar al contenido</a>
+
+<aside class="pliego-demo" aria-label="Controles de la demostración">
+  <form class="pliego-demo__formulario" id="form-demo">
+    <p class="pliego-demo__titulo">Demostración</p>
+      <fieldset class="pliego-demo__grupo" aria-labelledby="demo-leyenda-cuota">
+        <span class="pliego-demo__leyenda" id="demo-leyenda-cuota">Cuota</span>
+        <div class="pliego-demo__segmentos">
+        <label class="pliego-demo__opcion" for="demo-cuota-abierto"><input class="pliego-demo__input" type="radio" name="cuota" id="demo-cuota-abierto" value="abierto"><span>Abierto</span></label>
+        <label class="pliego-demo__opcion" for="demo-cuota-lector"><input class="pliego-demo__input" type="radio" name="cuota" id="demo-cuota-lector" value="lector"><span>Lector</span></label>
+        <label class="pliego-demo__opcion" for="demo-cuota-habitual"><input class="pliego-demo__input" type="radio" name="cuota" id="demo-cuota-habitual" value="habitual"><span>Habitual</span></label>
+        <label class="pliego-demo__opcion" for="demo-cuota-mecenas"><input class="pliego-demo__input" type="radio" name="cuota" id="demo-cuota-mecenas" value="mecenas"><span>Mecenas</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="pliego-demo__grupo" aria-labelledby="demo-leyenda-modo">
+        <span class="pliego-demo__leyenda" id="demo-leyenda-modo">Modo</span>
+        <div class="pliego-demo__segmentos">
+        <label class="pliego-demo__opcion" for="demo-lectura-diario"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-diario" value="diario"><span>Diario</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-facil"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-facil" value="facil"><span>Fácil</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-reportaje"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-reportaje" value="reportaje"><span>Reportaje</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-edicion"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-edicion" value="edicion"><span>Edición</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-expres"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-expres" value="expres"><span>Exprés</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-contexto"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-contexto" value="contexto"><span>Contexto</span></label>
+        <label class="pliego-demo__opcion" for="demo-lectura-escucha"><input class="pliego-demo__input" type="radio" name="lectura" id="demo-lectura-escucha" value="escucha"><span>Escucha</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="pliego-demo__grupo" aria-labelledby="demo-leyenda-tema">
+        <span class="pliego-demo__leyenda" id="demo-leyenda-tema">Tema</span>
+        <div class="pliego-demo__segmentos">
+        <label class="pliego-demo__opcion" for="demo-apariencia-auto"><input class="pliego-demo__input" type="radio" name="apariencia" id="demo-apariencia-auto" value="auto"><span>Auto</span></label>
+        <label class="pliego-demo__opcion" for="demo-apariencia-light"><input class="pliego-demo__input" type="radio" name="apariencia" id="demo-apariencia-light" value="light"><span>Claro</span></label>
+        <label class="pliego-demo__opcion" for="demo-apariencia-dark"><input class="pliego-demo__input" type="radio" name="apariencia" id="demo-apariencia-dark" value="dark"><span>Oscuro</span></label>
+        </div>
+      </fieldset>
+    <label class="atom-switch pliego-demo__mapa" for="demo-mapa">
+      <input class="atom-switch__input" type="checkbox" role="switch" id="demo-mapa" name="mapa">
+      <span class="atom-switch__slider" aria-hidden="true"></span>
+      <span class="atom-switch__label">Mapa de publicidad</span>
+    </label>
+  </form>
+</aside>
+
+<header class="pliego-cabecera">
+  <div class="pliego-cabecera__barra">
+    <p class="pliego-cabecera__edicion">
+      <time datetime="2026-10-10">Sábado, 10 de octubre de 2026</time>
+      <span class="pliego-cabecera__numero">Año IX · N.º 3.214</span>
+      <span class="pliego-cabecera__cuota" data-para="lector">Suscripción Lector</span>
+      <span class="pliego-cabecera__cuota" data-para="habitual">Suscripción Habitual</span>
+      <span class="pliego-cabecera__cuota" data-para="mecenas">Edición para mecenas</span>
+    </p>
+    <div class="pliego-cabecera__acciones">
+      <button class="atom-btn atom-btn--primary atom-btn--size-sm atom-btn--has-icon pliego-cabecera__lectura" type="button" popovertarget="panel-lectura">
+        <span class="atom-icon atom-icon--lc-book-open" aria-hidden="true"></span>
+        <span class="pliego-modo-actual">Lectura</span>
+      </button>
+      <a class="atom-btn atom-btn--primary atom-btn--filled atom-btn--size-sm pliego-cabecera__suscribir" href="suscripcion.html" data-para="abierto">Suscríbete</a>
+      <a class="atom-btn atom-btn--primary atom-btn--size-sm pliego-cabecera__suscribir" href="suscripcion.html" data-para="lector habitual">Menos anuncios</a>
+      <p class="pliego-insignia" data-para="mecenas">Mecenas <span>· sin publicidad</span></p>
+    </div>
+  </div>
+  <h1 class="pliego-cabecera__marca"><a href="index.html" aria-current="page">Pliego</a></h1>
+  <p class="pliego-cabecera__lema">Periódico independiente de la mañana</p>
+  <nav class="pliego-secciones" aria-label="Secciones">
+    <ul class="pliego-secciones__lista">
+      <li><a href="index.html" aria-current="page">Portada</a></li>
+      <li><a href="#t-destacadas">España</a></li>
+      <li><a href="#t-destacadas">Internacional</a></li>
+      <li><a href="#t-destacadas">Economía</a></li>
+      <li><a href="#t-opinion">Opinión</a></li>
+      <li><a href="articulo.html">Sociedad</a></li>
+      <li><a href="#t-ciencia">Ciencia</a></li>
+      <li><a href="#t-profundidad">Cultura</a></li>
+      <li><a href="#t-destacadas">Deportes</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div id="panel-lectura" class="pliego-lectura" popover role="dialog" aria-labelledby="panel-lectura-titulo">
+  <form class="pliego-lectura__formulario" id="form-lectura">
+    <div class="pliego-lectura__cabecera">
+      <h2 class="pliego-lectura__titulo" id="panel-lectura-titulo">Modo de lectura</h2>
+      <button class="atom-btn atom-btn--tertiary atom-btn--circle atom-btn--size-sm" type="button" popovertarget="panel-lectura" popovertargetaction="hide" aria-label="Cerrar">
+        <span class="atom-icon atom-icon--lc-x" aria-hidden="true"></span>
+      </button>
+    </div>
+    <p class="pliego-lectura__ayuda">Cambia cómo se ve el periódico. El texto es el mismo; cambia la forma de leerlo.</p>
+    <fieldset class="pliego-lectura__grupo">
+      <legend class="pliego-lectura__leyenda">Cómo quieres leer</legend>
+      <div class="pliego-opcion pliego-opcion--diario">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-diario">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-diario" value="diario" aria-describedby="nota-diario">
+          <span class="atom-radio__label">Diario</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-diario">La edición de siempre, ordenada por importancia.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--facil">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-facil">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-facil" value="facil" aria-describedby="nota-facil">
+          <span class="atom-radio__label">Fácil</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-facil">Letra grande, frases cortas y un solo camino.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--reportaje">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-reportaje">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-reportaje" value="reportaje" aria-describedby="nota-reportaje">
+          <span class="atom-radio__label">Reportaje</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-reportaje">Imagen a sangre y ritmo de revista.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--edicion">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-edicion">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-edicion" value="edicion" aria-describedby="nota-edicion">
+          <span class="atom-radio__label">Edición</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-edicion">Composición de imprenta, notas al margen.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--expres">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-expres">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-expres" value="expres" aria-describedby="nota-expres">
+          <span class="atom-radio__label">Exprés</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-expres">Titulares, claves y lo esencial de cada parte.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--contexto">
+        <span class="pliego-opcion__muestra" aria-hidden="true">Aa</span>
+        <label class="atom-radio" for="lectura-contexto">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-contexto" value="contexto" aria-describedby="nota-contexto">
+          <span class="atom-radio__label">Contexto</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-contexto">Antecedentes, cronología y datos antes de la historia.</span>
+      </div>
+      <div class="pliego-opcion pliego-opcion--escucha">
+        <span class="pliego-opcion__muestra" aria-hidden="true"></span>
+        <label class="atom-radio" for="lectura-escucha">
+          <input class="atom-radio__input" type="radio" name="lectura" id="lectura-escucha" value="escucha" aria-describedby="nota-escucha">
+          <span class="atom-radio__label">Escucha</span>
+        </label>
+        <span class="pliego-opcion__nota" id="nota-escucha"><span class="pliego-opcion__sello">Mecenas</span> El artículo, leído en voz alta. Solo para Mecenas.</span>
+      </div>
+    </fieldset>
+    <fieldset class="pliego-lectura__grupo pliego-lectura__grupo--apariencia">
+      <legend class="pliego-lectura__leyenda">Apariencia</legend>
+      <label class="atom-radio" for="apariencia-auto">
+        <input class="atom-radio__input" type="radio" name="apariencia" id="apariencia-auto" value="auto">
+        <span class="atom-radio__label">Automática</span>
+      </label>
+      <label class="atom-radio" for="apariencia-clara">
+        <input class="atom-radio__input" type="radio" name="apariencia" id="apariencia-clara" value="light">
+        <span class="atom-radio__label">Clara</span>
+      </label>
+      <label class="atom-radio" for="apariencia-oscura">
+        <input class="atom-radio__input" type="radio" name="apariencia" id="apariencia-oscura" value="dark">
+        <span class="atom-radio__label">Oscura</span>
+      </label>
+    </fieldset>
+  </form>
+</div>
+<p class="syx-sr-only" role="status" id="lectura-estado"></p>
+<div class="pliego-franja-pub">
+<div class="pliego-pub pliego-pub--billboard" data-formato="Billboard" data-medida="970 × 250 · móvil 320 × 100" data-cuotas="abierto">
+  <p class="pliego-pub__etiqueta"><span>Publicidad</span> <a class="pliego-pub__quitar" href="suscripcion.html" data-para="abierto lector habitual">Ver menos anuncios</a></p>
+  <a class="pliego-pub__creatividad" href="#anuncio" rel="sponsored"><picture><source media="(min-width: 64rem)" srcset="img/pub/billboard-lumbre.svg" width="970" height="250"><img src="img/pub/movil-100-lumbre.svg" alt="Lumbre, energía solar en casa: tu tejado ya produce luz. Calcula tu ahorro." width="320" height="100" loading="lazy" decoding="async"></picture></a>
+</div>
+<div class="pliego-pub pliego-pub--leaderboard" data-formato="Leaderboard" data-medida="728 × 90 · móvil 320 × 50" data-cuotas="lector">
+  <p class="pliego-pub__etiqueta"><span>Publicidad</span> <a class="pliego-pub__quitar" href="suscripcion.html" data-para="abierto lector habitual">Ver menos anuncios</a></p>
+  <a class="pliego-pub__creatividad" href="#anuncio" rel="sponsored"><picture><source media="(min-width: 48rem)" srcset="img/pub/leaderboard-anden.svg" width="728" height="90"><img src="img/pub/movil-50-anden.svg" alt="Andén, viajes en tren: el otoño se ve mejor por la ventanilla. Ver escapadas." width="320" height="50" loading="lazy" decoding="async"></picture></a>
+</div>
+</div>
+
+
+<main id="contenido" class="pliego-portada">
+  <div class="pliego-pub pliego-pub--piel" data-formato="Piel (skin)" data-medida="2 × 240 × 900, solo portada y pantallas ≥ 1856 px" data-cuotas="abierto">
+    <a class="pliego-pub__lado pliego-pub__lado--inicio" href="#anuncio" rel="sponsored" tabindex="-1" aria-hidden="true"><img src="img/pub/piel-lumbre.svg" alt="" width="240" height="900" loading="lazy"></a>
+    <a class="pliego-pub__lado pliego-pub__lado--fin" href="#anuncio" rel="sponsored" tabindex="-1" aria-hidden="true"><img src="img/pub/piel-lumbre.svg" alt="" width="240" height="900" loading="lazy"></a>
+  </div>
+
+  <aside class="pliego-escucha-bloqueo pliego-portada__bloqueo" aria-labelledby="bloqueo-titulo">
+    <p class="pliego-escucha-bloqueo__sello" aria-hidden="true"></p>
+    <h2 class="pliego-escucha-bloqueo__titulo" id="bloqueo-titulo">Escuchar Pliego es parte de Mecenas</h2>
+    <p class="pliego-escucha-bloqueo__texto">Con el modo Escucha, cada artículo se lee en voz alta mientras el texto te acompaña párrafo a párrafo, por capítulos y a la velocidad que elijas. Mientras tanto, te mostramos la edición Diario.</p>
+    <a class="atom-btn atom-btn--primary atom-btn--filled" href="suscripcion.html">Ver Mecenas · 14,99 € al mes</a>
+  </aside>
+
+  <section class="pliego-portada__ultima pliego-ultima" aria-labelledby="t-ultima">
+    <h2 class="pliego-ultima__titulo" id="t-ultima">Última hora</h2>
+    <ol class="pliego-ultima__lista">
+      <li class="pliego-ultima__item"><time datetime="2026-10-10T13:42+02:00">13:42</time> <a href="articulo.html">La Confederación del Alcor adelanta al 20 de octubre la reunión sobre la emergencia hidrológica</a></li>
+      <li class="pliego-ultima__item"><time datetime="2026-10-10T12:15+02:00">12:15</time> <a href="articulo.html">Restablecido el servicio de cercanías tras la avería en la catenaria de la línea 3</a></li>
+      <li class="pliego-ultima__item"><time datetime="2026-10-10T11:05+02:00">11:05</time> <a href="articulo.html">Aviso amarillo por viento en el litoral norte hasta el domingo a mediodía</a></li>
+    </ol>
+  </section>
+
+  <section class="pliego-portada__apertura" aria-labelledby="t-apertura">
+    <h2 class="syx-sr-only" id="t-apertura">Noticia de apertura</h2>
+    <article class="pliego-teaser pliego-teaser--apertura pliego-seccion--sociedad">
+      <div class="pliego-teaser__cuerpo">
+        <p class="pliego-teaser__cintillo"><span class="pliego-genero"><span class="atom-pill atom-pill--dark">Reportaje</span></span> Medio ambiente</p>
+        <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">El verano en que el Alcor dejó de llegar al mar</a></h3>
+        <p class="pliego-teaser__entradilla">El embalse de La Serrata cierra el año hidrológico al 21 % de su capacidad, el peor dato en cuarenta años. En los pueblos de la cuenca, la sequía ya tiene horario: el del grifo.</p>
+        <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Elena Varela</span> <span class="pliego-teaser__lugar">Valdeoliva</span> <time datetime="2026-10-10T06:00+02:00">06:00</time> <span class="pliego-teaser__tiempo">9 min</span></p>
+      </div>
+      <figure class="pliego-teaser__media">
+        <img src="img/sequia.svg" alt="Ilustración: tierra agrietada bajo un sol bajo, con un árbol seco y un hilo de agua al fondo" width="1200" height="800" fetchpriority="high">
+      </figure>
+    </article>
+  </section>
+
+  <section class="pliego-portada__destacadas pliego-bloque" aria-labelledby="t-destacadas">
+    <div class="pliego-bloque__cabecera">
+      <h2 class="pliego-bloque__titulo" id="t-destacadas">Lo más importante</h2>
+    </div>
+    <div class="pliego-rejilla">
+      <article class="pliego-teaser pliego-seccion--espana">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Vivienda</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">Los alquileres de temporada se duplican en las ciudades medianas en solo dos años</a></h3>
+          <p class="pliego-teaser__entradilla">Un estudio de cuarenta municipios sitúa el contrato de once meses como la nueva fórmula para esquivar los topes de precio.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Javier Robles</span> <time datetime="2026-10-10T08:30+02:00">08:30</time> <span class="pliego-teaser__tiempo">5 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/ciudad.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-seccion--internacional">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Internacional</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">La cumbre del Ártico cierra sin acuerdo sobre las nuevas rutas de navegación</a></h3>
+          <p class="pliego-teaser__entradilla">Ocho países discrepan sobre quién vigila el paso que el deshielo abre cada verano durante más semanas.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Clara Mestre</span> <span class="pliego-teaser__lugar">Tromsø</span> <time datetime="2026-10-10T09:10+02:00">09:10</time> <span class="pliego-teaser__tiempo">6 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/artico.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-seccion--economia">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo"><span class="pliego-genero"><span class="atom-pill atom-pill--subtle">Análisis</span></span> Economía</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">Por qué el aceite baja en el supermercado mientras el olivar se queda sin riego</a></h3>
+          <p class="pliego-teaser__entradilla">Las existencias de la cosecha pasada sostienen el precio. La próxima campaña cuenta otra historia.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Nuria Saz</span> <time datetime="2026-10-10T07:45+02:00">07:45</time> <span class="pliego-teaser__tiempo">7 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/olivos.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-seccion--espana">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Movilidad</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">El tren nocturno vuelve a unir el norte y el sur tras doce años sin servicio</a></h3>
+          <p class="pliego-teaser__entradilla">Saldrá tres noches por semana desde diciembre, con literas y un coche cafetería que abre hasta la una.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Pablo Arnedo</span> <time datetime="2026-10-09T21:20+02:00">Ayer</time> <span class="pliego-teaser__tiempo">4 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/tren.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-seccion--ciencia">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Energía</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">La eólica cubre por primera vez más de la mitad de la demanda durante un mes entero</a></h3>
+          <p class="pliego-teaser__entradilla">Septiembre cerró con un 52 % de generación eólica y precios mayoristas en mínimos desde la primavera.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Iker Lasa</span> <time datetime="2026-10-10T10:00+02:00">10:00</time> <span class="pliego-teaser__tiempo">3 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/energia.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-seccion--deportes">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Deportes</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">El equipo femenino asegura el ascenso a falta de tres jornadas</a></h3>
+          <p class="pliego-teaser__entradilla">Un gol en el minuto 88 ante el segundo clasificado cerró una temporada de diecinueve victorias.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Sara Quintana</span> <time datetime="2026-10-09T22:40+02:00">Ayer</time> <span class="pliego-teaser__tiempo">3 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/futbol.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-teaser--patrocinado pliego-pub" data-formato="Nativo de primera parte" data-medida="Pieza de portada etiquetada" data-cuotas="abierto lector habitual">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo"><span class="pliego-genero"><span class="atom-pill atom-pill--neutral">Patrocinado</span></span> Hortal Seguros</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="#anuncio" rel="sponsored">Cinco gestos para preparar tu casa antes de las primeras lluvias</a></h3>
+          <p class="pliego-teaser__entradilla">Canalones, tejado y ventanas: una lista de revisión de otoño que cabe en una tarde.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Contenido de Hortal Seguros, no de la redacción</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/pub/nativo-hortal.svg" alt="" width="600" height="400" loading="lazy" decoding="async"></figure>
+      </article>
+    </div>
+  </section>
+
+  <div class="pliego-portada__lateral">
+<div class="pliego-pub pliego-pub--mediapagina" data-formato="Media página" data-medida="300 × 600 · móvil 300 × 250" data-cuotas="abierto lector">
+  <p class="pliego-pub__etiqueta"><span>Publicidad</span> <a class="pliego-pub__quitar" href="suscripcion.html" data-para="abierto lector habitual">Ver menos anuncios</a></p>
+  <a class="pliego-pub__creatividad" href="#anuncio" rel="sponsored"><picture><source media="(min-width: 64rem)" srcset="img/pub/mediapagina-calma.svg" width="300" height="600"><img src="img/pub/robapaginas-calma.svg" alt="Calma, colchones: dormir bien no es un lujo. Prueba 100 noches." width="300" height="250" loading="lazy" decoding="async"></picture></a>
+</div>
+  </div>
+
+  <aside class="pliego-portada__leido pliego-leido" aria-labelledby="t-leido">
+    <h2 class="pliego-leido__titulo" id="t-leido">Lo más leído</h2>
+    <ol class="pliego-leido__lista">
+      <li class="pliego-leido__item"><a href="articulo.html">El verano en que el Alcor dejó de llegar al mar</a></li>
+      <li class="pliego-leido__item"><a href="articulo.html">Qué cambia en tu factura de la luz a partir de noviembre</a></li>
+      <li class="pliego-leido__item"><a href="articulo.html">El tren nocturno vuelve a unir el norte y el sur</a></li>
+      <li class="pliego-leido__item"><a href="articulo.html">Doce libros para leer este otoño, elegidos por libreras</a></li>
+      <li class="pliego-leido__item"><a href="articulo.html">Los alquileres de temporada se duplican en las ciudades medianas</a></li>
+    </ol>
+  </aside>
+
+  <section class="pliego-portada__opinion pliego-bloque pliego-bloque--opinion" aria-labelledby="t-opinion">
+    <div class="pliego-bloque__cabecera">
+      <h2 class="pliego-bloque__titulo" id="t-opinion">Opinión</h2>
+    </div>
+    <div class="pliego-rejilla pliego-rejilla--opinion">
+      <article class="pliego-teaser pliego-teaser--opinion">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Tribuna</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">El agua no entiende de límites municipales</a></h3>
+          <p class="pliego-teaser__meta"><span class="pliego-retrato"><span class="atom-avatar atom-avatar--sm" aria-hidden="true">MI</span></span> <span class="pliego-teaser__autor">Marta Ibarra</span></p>
+        </div>
+      </article>
+      <article class="pliego-teaser pliego-teaser--opinion">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Columna</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">Elogio del tren lento, que te devuelve el paisaje</a></h3>
+          <p class="pliego-teaser__meta"><span class="pliego-retrato"><span class="atom-avatar atom-avatar--sm" aria-hidden="true">DO</span></span> <span class="pliego-teaser__autor">Daniel Oset</span></p>
+        </div>
+      </article>
+      <article class="pliego-teaser pliego-teaser--opinion">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Editorial</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">Un plan de sequía no se improvisa en octubre</a></h3>
+          <p class="pliego-teaser__meta"><span class="pliego-retrato"><span class="atom-avatar atom-avatar--sm" aria-hidden="true">P</span></span> <span class="pliego-teaser__autor">Pliego</span></p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="pliego-portada__pubmedio">
+<div class="pliego-pub pliego-pub--intermedio" data-formato="Billboard intermedio" data-medida="970 × 250 · móvil robapáginas 300 × 250" data-cuotas="abierto">
+  <p class="pliego-pub__etiqueta"><span>Publicidad</span> <a class="pliego-pub__quitar" href="suscripcion.html" data-para="abierto lector habitual">Ver menos anuncios</a></p>
+  <a class="pliego-pub__creatividad" href="#anuncio" rel="sponsored"><picture><source media="(min-width: 64rem)" srcset="img/pub/billboard-cuadernia.svg" width="970" height="250"><img src="img/pub/robapaginas-cuadernia.svg" alt="Cuadernia, librería en línea: los libros del otoño, a domicilio. Explorar." width="300" height="250" loading="lazy" decoding="async"></picture></a>
+</div>
+  </div>
+
+  <section class="pliego-portada__profundidad pliego-bloque" aria-labelledby="t-profundidad">
+    <div class="pliego-bloque__cabecera">
+      <h2 class="pliego-bloque__titulo" id="t-profundidad">En profundidad</h2>
+    </div>
+    <div class="pliego-rejilla">
+      <article class="pliego-teaser pliego-seccion--cultura">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Cultura</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">Una nave industrial, doce bailarines y ningún telón: así abre el Festival de Otoño</a></h3>
+          <p class="pliego-teaser__entradilla">La compañía residente estrena una pieza de noventa minutos que el público recorre de pie.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Irene Galdós</span> <span class="pliego-teaser__tiempo">8 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/danza.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-seccion--espana">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Educación</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">La escuela rural que se negó a cerrar con siete alumnos</a></h3>
+          <p class="pliego-teaser__entradilla">Tres familias llegadas en un año han salvado el aula única de un pueblo de 140 habitantes.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Ana Bermejo</span> <span class="pliego-teaser__tiempo">10 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/aula.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-seccion--sociedad">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Medio ambiente</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">El bosque que se replanta solo: diez años después del incendio</a></h3>
+          <p class="pliego-teaser__entradilla">Los pinos han vuelto antes de lo previsto. Los ingenieros explican qué hicieron y qué no hicieron.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Elena Varela</span> <span class="pliego-teaser__tiempo">12 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/bosque.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+    </div>
+  </section>
+
+  <div class="pliego-portada__mejora">
+<aside class="pliego-mejora" aria-label="Suscripción">
+  <p class="pliego-mejora__texto" data-para="abierto"><strong>¿Demasiados anuncios?</strong> Con <b>Lector</b>, por 4,99 € al mes, desaparecen el vídeo, la piel, el anclaje inferior y la mitad de los banners. Ningún anuncio se quedará fijo en tu pantalla.</p>
+  <p class="pliego-mejora__texto" data-para="lector"><strong>Ya ves menos publicidad.</strong> Con <b>Habitual</b>, por 8,99 € al mes, solo quedan las piezas patrocinadas, marcadas y con el estilo del periódico. Con <b>Mecenas</b>, ninguna.</p>
+  <p class="pliego-mejora__texto" data-para="habitual"><strong>Ya solo ves piezas patrocinadas y marcadas.</strong> Con <b>Mecenas</b>, por 14,99 € al mes, Pliego no te muestra ni una.</p>
+  <p class="pliego-mejora__texto" data-para="mecenas"><strong>Gracias por sostener Pliego.</strong> Con tu cuota no ves publicidad en ninguna página.</p>
+  <a class="atom-btn atom-btn--primary atom-btn--filled atom-btn--size-sm" href="suscripcion.html" data-para="abierto lector habitual">Comparar cuotas</a>
+</aside>
+  </div>
+
+  <section class="pliego-portada__ciencia pliego-bloque" aria-labelledby="t-ciencia">
+    <div class="pliego-bloque__cabecera">
+      <h2 class="pliego-bloque__titulo" id="t-ciencia">Ciencia</h2>
+      <p class="pliego-patrocinio pliego-pub" data-formato="Patrocinio de sección" data-medida="Logotipo 220 × 48" data-cuotas="abierto lector habitual">Con el apoyo de <img src="img/pub/logo-cauce.svg" alt="Fundación Cauce" width="220" height="48"></p>
+    </div>
+    <div class="pliego-rejilla">
+      <article class="pliego-teaser pliego-seccion--ciencia">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Astronomía</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">Un observatorio de montaña detecta vapor de agua en un exoplaneta templado</a></h3>
+          <p class="pliego-teaser__entradilla">El planeta tarda 41 días en dar la vuelta a su estrella y está a 120 años luz.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Tomás Rull</span> <span class="pliego-teaser__tiempo">5 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/telescopio.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-seccion--ciencia">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Océanos</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">El Mediterráneo encadena su tercer otoño con el agua por encima de 24 grados</a></h3>
+          <p class="pliego-teaser__entradilla">Las boyas costeras registran temperaturas de agosto a mediados de octubre.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Laia Ferrer</span> <span class="pliego-teaser__tiempo">4 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/mar.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+      <article class="pliego-teaser pliego-seccion--ciencia">
+        <div class="pliego-teaser__cuerpo">
+          <p class="pliego-teaser__cintillo">Agricultura</p>
+          <h3 class="pliego-teaser__titulo"><a class="pliego-teaser__enlace" href="articulo.html">Sembrar en otoño lo que antes se sembraba en primavera</a></h3>
+          <p class="pliego-teaser__entradilla">Los ensayos con variedades de ciclo corto ganan terreno en las cooperativas del interior.</p>
+          <p class="pliego-teaser__meta"><span class="pliego-teaser__autor">Nuria Saz</span> <span class="pliego-teaser__tiempo">6 min</span></p>
+        </div>
+        <figure class="pliego-teaser__media"><img src="img/campo.svg" alt="" width="1200" height="800" loading="lazy" decoding="async"></figure>
+      </article>
+    </div>
+  </section>
+
+  <aside class="pliego-portada__boletin pliego-boletin" id="boletin" aria-labelledby="t-boletin">
+    <h2 class="pliego-boletin__titulo" id="t-boletin">La mañana, en cinco minutos</h2>
+    <p class="pliego-boletin__texto">Cada día a las 7:00, lo que necesitas saber antes de empezar. Gratis, y te das de baja con un clic.</p>
+    <form class="pliego-boletin__formulario" id="form-boletin" novalidate>
+      <label class="atom-label" for="boletin-correo">Correo electrónico</label>
+      <div class="pliego-boletin__fila">
+        <input class="atom-input" type="email" id="boletin-correo" name="correo" autocomplete="email" placeholder="nombre@correo.es" required>
+        <button class="atom-btn atom-btn--primary atom-btn--filled" type="submit">Apuntarme</button>
+      </div>
+      <p class="pliego-boletin__estado" id="boletin-estado" role="status"></p>
+    </form>
+  </aside>
+
+</main>
+
+<div class="pliego-pub pliego-pub--anclaje" data-formato="Anclaje inferior" data-medida="728 × 90 · móvil 320 × 50, con cierre" data-cuotas="abierto">
+  <p class="pliego-pub__etiqueta"><span>Publicidad</span> <a class="pliego-pub__quitar" href="suscripcion.html" data-para="abierto lector habitual">Ver menos anuncios</a></p>
+  <a class="pliego-pub__creatividad" href="#anuncio" rel="sponsored"><picture><source media="(min-width: 48rem)" srcset="img/pub/leaderboard-hortal.svg" width="728" height="90"><img src="img/pub/movil-50-hortal.svg" alt="Hortal Seguros, seguro de hogar: tu casa, a cubierto. Pide precio." width="320" height="50" loading="lazy" decoding="async"></picture></a>
+  <button class="atom-btn atom-btn--tertiary atom-btn--circle atom-btn--size-sm pliego-pub__cerrar" type="button" data-accion="cerrar-anclaje" aria-label="Cerrar anuncio"><span class="atom-icon atom-icon--lc-x" aria-hidden="true"></span></button>
+</div>
+<footer class="pliego-pie">
+  <p class="pliego-pie__marca">Pliego</p>
+  <nav class="pliego-pie__nav" aria-label="Sobre el periódico">
+    <ul class="pliego-pie__lista">
+      <li><a href="#contenido">Quiénes somos</a></li>
+      <li><a href="#contenido">Libro de estilo</a></li>
+      <li><a href="#contenido">Fe de errores</a></li>
+      <li><a href="#contenido">Accesibilidad</a></li>
+      <li><a href="#contenido">Aviso legal</a></li>
+    </ul>
+  </nav>
+  <p class="pliego-pie__nota">Pliego es un periódico ficticio: personas, lugares y datos son inventados. Demostración de modos de lectura construida sobre el sistema de diseño SYX.</p>
+  <p class="pliego-recuento"><span class="pliego-recuento__cuota"></span> <span class="pliego-recuento__n"></span></p>
+  <p class="pliego-pie__credito">Diseñado y desarrollado por José Luis Pizarro</p>
+</footer>
+
+</body>
+</html>

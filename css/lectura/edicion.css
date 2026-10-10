@@ -1,0 +1,411 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODO EDICIÓN · composición de imprenta
+   Para quién: quien lee despacio y valora la composición tanto como el texto.
+   Color: los mínimos, con un papel de más cuerpo y la tinta más azul.
+   Voz: titular estrecho (80 %) y de alto contraste (opsz 144); mayúscula
+   espaciada en lugar de versalitas; texto justificado con partición y sangría
+   de libro. Imagen en monocromo. En escritorio, notas al margen con subgrid.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+:root[data-lectura="edicion"] {
+  --pliego-modo-nombre: "Edición";
+
+  /* Color: papel con algo más de cuerpo y tinta azul de imprenta */
+  --semantic-color-bg-primary: light-dark(oklch(from var(--pliego-papel-claro) calc(l - 0.012) calc(c + 0.012) 80), oklch(from var(--pliego-papel-oscuro) l calc(c + 0.02) h));
+  --semantic-color-bg-secondary: light-dark(oklch(from var(--pliego-papel-claro) calc(l - 0.035) calc(c + 0.014) 80), oklch(from var(--pliego-papel-oscuro) calc(l + 0.035) calc(c + 0.02) h));
+  --semantic-color-text-primary: light-dark(oklch(from var(--pliego-tinta-claro) l calc(c + 0.03) h), var(--pliego-tinta-oscuro));
+  --semantic-color-border-strong: var(--semantic-color-text-primary);
+
+  /* Etiquetas de género en filete de lacre, sin relleno (tokens de atom-pill) */
+  --component-pill-dark-bg: transparent;
+  --component-pill-dark-border-color: var(--semantic-color-primary);
+  --component-pill-dark-color: var(--semantic-color-primary-text);
+  --component-pill-subtle-border-color: var(--semantic-color-primary);
+  --component-pill-subtle-color: var(--semantic-color-primary-text);
+
+  /* Voz: titular estrecho y de alto contraste (opsz 144, anchura 80);
+     las versalitas se sustituyen por mayúscula espaciada en peso medio */
+  --pliego-titular-peso: 420;
+  --pliego-titular-ancho: 72%;
+  --pliego-titular-ejes: "GRAD" var(--pliego-grado), "opsz" 144;
+  --pliego-texto-ancho: 96%;
+  --pliego-cintillo-caja: uppercase;
+  --pliego-cintillo-espaciado: 0.1em;
+
+  --pliego-titular-espaciado: 0em;
+  --pliego-titular-interlineado: 1.12;
+
+  --pliego-t-marca: clamp(2.25rem, 8vw, 4.75rem);
+  --pliego-t-apertura: clamp(2rem, 5.5vw, 3.75rem);
+  --pliego-t-h1: clamp(2.25rem, 6.5vw, 4.25rem);
+  --pliego-t-h2: clamp(1.25rem, 2.6vw, 1.5rem);
+  --pliego-t-teaser: clamp(1.1875rem, 2.2vw, 1.375rem);
+  --pliego-t-entradilla: clamp(1.25rem, 2.6vw, 1.5rem);
+  --pliego-t-cita: clamp(1.5rem, 3.6vw, 2.25rem);
+  --pliego-t-bloque: 1.0625rem;
+  --pliego-t-ui: 1rem;
+  --pliego-t-mini: 0.9375rem;
+
+  --pliego-texto-tamano: 1.3125rem;
+  --pliego-texto-interlineado: 1.55;
+  --pliego-texto-medida: 34rem;
+  --pliego-texto-alineacion: start;
+  --pliego-texto-guiones: auto;
+  --pliego-parrafo-espacio: 0;
+  --pliego-parrafo-sangria: 1.5em;
+
+  /* 3 · Forma e imagen */
+  --semantic-border-radius-default: 0;
+  --semantic-border-radius-sm: 0;
+  --semantic-border-radius-lg: 0;
+  --semantic-border-radius-full: 0;
+  --theme-radius: 0;
+  --pliego-radio: 0;
+  --pliego-img-filtro: grayscale(1) contrast(1.06) sepia(0.12);
+  --pliego-img-proporcion: 3 / 2;
+  --pliego-hueco: 2.5rem;
+  --pliego-ver-ultima: none;
+  --pliego-ver-facil: none;
+  --pliego-portada-areas:
+    "apertura"
+    "destacadas"
+    "lateral"
+    "leido"
+    "opinion"
+    "pubmedio"
+    "profundidad"
+    "mejora"
+    "ciencia"
+    "boletin";
+}
+
+/* En oscuro la foto en monocromo baja una luz para no deslumbrar */
+@media (prefers-color-scheme: dark) {
+  :root[data-lectura="edicion"]:not([data-theme="light"]) {
+    --pliego-img-filtro: grayscale(1) brightness(0.82) contrast(1.08);
+  }
+}
+:root[data-lectura="edicion"][data-theme="dark"] {
+  --pliego-img-filtro: grayscale(1) brightness(0.82) contrast(1.08);
+}
+
+@media (min-width: 48rem) {
+  :root[data-lectura="edicion"] {
+    --pliego-texto-alineacion: justify;
+    --pliego-teaser-apertura-areas: "cuerpo" "media";
+    --pliego-portada-columnas: repeat(3, minmax(0, 1fr));
+    --pliego-portada-areas:
+      "apertura apertura leido"
+      "apertura apertura lateral"
+      "destacadas destacadas destacadas"
+      "opinion opinion opinion"
+      "pubmedio pubmedio pubmedio"
+      "profundidad profundidad profundidad"
+      "mejora mejora mejora"
+      "ciencia ciencia boletin";
+    --pliego-rejilla-min: 17rem;
+  }
+}
+
+/* Escritorio: aparece la columna de margen para las notas.
+   La caja de texto queda centrada en la página: a la izquierda se reserva un
+   contramargen del mismo ancho que el margen de notas, así la cabecera
+   centrada, el texto, las figuras anchas y la cabecera del periódico
+   comparten eje. Hacen falta 34 + 2 × (3 + 15) = 70 rem más los márgenes. */
+@media (min-width: 75rem) {
+  :root[data-lectura="edicion"] {
+    --pliego-articulo-columnas:
+      [sangre-start] minmax(var(--pliego-margen), 1fr)
+      [ancho-start contramargen-start] 15rem
+      [contramargen-end] 3rem
+      [texto-start] minmax(0, var(--pliego-texto-medida))
+      [texto-end] 3rem
+      [margen-start] 15rem
+      [margen-end ancho-end] minmax(var(--pliego-margen), 1fr)
+      [sangre-end];
+    --pliego-columna-portada: ancho;
+    --pliego-columna-ancha: ancho;
+    --pliego-columna-nota: margen;
+    --pliego-columna-ficha: ancho;
+    --pliego-fila-nota: span 3;
+  }
+}
+
+@layer syx.app {
+  /* ── Cabecera de ejemplar ── */
+  :root[data-lectura="edicion"] .pliego-cabecera {
+    gap: 0.5rem;
+  }
+
+  :root[data-lectura="edicion"] .pliego-cabecera__marca {
+    order: 1;
+    padding-block: 0.75rem 0.25rem;
+  }
+
+  :root[data-lectura="edicion"] .pliego-cabecera__lema {
+    order: 2;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 1rem;
+  }
+
+  :root[data-lectura="edicion"] .pliego-cabecera__barra {
+    order: 3;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    padding-block: 0.375rem;
+    border-block: 3px double var(--pliego-regla-fuerte);
+  }
+
+  :root[data-lectura="edicion"] .pliego-cabecera__edicion {
+    justify-content: center;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+  }
+
+  :root[data-lectura="edicion"] .pliego-secciones {
+    order: 4;
+    border-block-start: 0;
+  }
+
+  @media (max-width: 47.99rem) {
+    :root[data-lectura="edicion"] .pliego-secciones {
+      border-block-start: 3px double var(--pliego-regla-fuerte);
+    }
+  }
+
+  :root[data-lectura="edicion"] .pliego-secciones__lista {
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Portada: columnas con filete ── */
+  :root[data-lectura="edicion"] .pliego-teaser--apertura {
+    text-align: center;
+    justify-items: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-teaser--apertura .pliego-teaser__media {
+    justify-self: stretch;
+  }
+
+  :root[data-lectura="edicion"] .pliego-teaser--apertura .pliego-teaser__cintillo,
+  :root[data-lectura="edicion"] .pliego-teaser--apertura .pliego-teaser__meta {
+    justify-content: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-teaser--apertura .pliego-teaser__entradilla {
+    max-inline-size: 38rem;
+    font-style: italic;
+  }
+
+  :root[data-lectura="edicion"] .pliego-bloque__cabecera,
+  :root[data-lectura="edicion"] .pliego-leido__titulo {
+    justify-content: center;
+    padding-block: 0.375rem;
+    border-block: var(--pliego-grosor-regla) solid var(--pliego-regla-fuerte);
+    text-align: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-rejilla {
+    overflow: clip;
+    overflow-clip-margin: 0.75rem;
+  }
+
+  :root[data-lectura="edicion"] .pliego-rejilla > .pliego-teaser::before {
+    content: "";
+    /* syx-allow R03: filete vertical centrado en el hueco entre columnas */
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--pliego-hueco) / -2);
+    border-inline-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+  }
+
+  :root[data-lectura="edicion"] .pliego-teaser--opinion {
+    border-block-start: 0;
+    padding-block-start: 0;
+    text-align: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-teaser--opinion .pliego-teaser__meta {
+    justify-content: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-teaser__meta time,
+  :root[data-lectura="edicion"] .pliego-teaser__tiempo {
+    font-style: italic;
+  }
+
+  @media (min-width: 48rem) {
+    :root[data-lectura="edicion"] .pliego-portada__leido {
+      padding-inline-start: 1.25rem;
+      border-inline-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    }
+  }
+
+  :root[data-lectura="edicion"] .pliego-leido__item::before {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-variant-numeric: oldstyle-nums;
+    font-style: italic;
+  }
+
+  /* ── Artículo: libro ── */
+  :root[data-lectura="edicion"] .pliego-articulo__cabecera {
+    justify-items: center;
+    text-align: center;
+  }
+
+  /* La ruta, sobre el mismo eje que la cabecera centrada */
+  :root[data-lectura="edicion"] .pliego-ruta {
+    display: flex;
+    justify-content: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-articulo__cintillo {
+    justify-content: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-articulo__entradilla {
+    font-style: italic;
+    text-align: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-firma {
+    justify-content: center;
+    border-block: 0;
+  }
+
+  :root[data-lectura="edicion"] .pliego-firma__autor a {
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+  }
+
+  :root[data-lectura="edicion"] .pliego-compartir,
+  :root[data-lectura="edicion"] .pliego-tiempo {
+    justify-content: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-figura__pie {
+    font-style: italic;
+  }
+
+  /* Capítulos: florón y versalitas */
+  :root[data-lectura="edicion"] .pliego-capitulo__titulo {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding-block: 1.5rem 0.5rem;
+    text-align: center;
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    text-transform: uppercase;
+    font-size: 1.125rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+  }
+
+  :root[data-lectura="edicion"] .pliego-capitulo__titulo::before {
+    content: "❦" / "";
+    font-size: 1.5rem;
+    letter-spacing: 0;
+    color: var(--pliego-acento);
+  }
+
+  :root[data-lectura="edicion"] .pliego-capitulo > .pliego-capitulo__titulo + p::first-line {
+    text-transform: uppercase;
+    font-size: 0.82em;
+    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
+  }
+
+  /* Cita entre filetes de oro */
+  :root[data-lectura="edicion"] .pliego-cita {
+    margin-block: 1em;
+    padding-block: 1.25rem;
+    border-block: var(--pliego-grosor-regla) solid var(--pliego-acento);
+    text-align: center;
+  }
+
+  :root[data-lectura="edicion"] .pliego-cita__texto {
+    font-style: normal;
+  }
+
+  /* Notas: al margen en escritorio, intercaladas en móvil */
+  :root[data-lectura="edicion"] .pliego-capitulo > .pliego-nota {
+    padding: 0.25rem 0 0.25rem 1rem;
+    border-inline-start: var(--pliego-grosor-regla) solid var(--pliego-acento);
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    margin-block: 0.75em;
+  }
+
+  @media (min-width: 75rem) {
+    :root[data-lectura="edicion"] .pliego-capitulo > .pliego-nota {
+      margin-block: 0;
+      text-indent: 0;
+    }
+  }
+
+  :root[data-lectura="edicion"] .pliego-nota strong {
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.06em;
+  }
+
+  :root[data-lectura="edicion"] .pliego-capitulo > .pliego-ficha,
+  :root[data-lectura="edicion"] .pliego-capitulo > .pliego-figura--ancha,
+  :root[data-lectura="edicion"] .pliego-capitulo > .pliego-contexto,
+  :root[data-lectura="edicion"] .pliego-capitulo > .pliego-cronologia {
+    margin-block: 1.5em;
+  }
+
+  :root[data-lectura="edicion"] .pliego-ficha {
+    border-block: 3px double var(--pliego-regla-fuerte);
+  }
+
+  :root[data-lectura="edicion"] .pliego-claves {
+    border-inline-start: 0;
+    border-block: var(--pliego-grosor-regla) solid var(--pliego-acento);
+    background: transparent;
+    padding-inline: 0;
+  }
+
+  :root[data-lectura="edicion"] .pliego-claves__lista {
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    font-size: 1.125rem;
+  }
+
+  :root[data-lectura="edicion"] .pliego-boletin {
+    text-align: center;
+    justify-items: center;
+    border: 3px double var(--pliego-regla-fuerte);
+    background: transparent;
+  }
+}
+
+.pliego-opcion--edicion {
+  --pliego-muestra-papel: var(--semantic-color-bg-primary);
+  --pliego-muestra-tinta: var(--semantic-color-text-primary);
+  --pliego-muestra-acento: var(--semantic-color-primary);
+  --pliego-muestra-peso: 420;
+  --pliego-muestra-ancho: 72%;
+  --pliego-muestra-estilo: normal;
+}

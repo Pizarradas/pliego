@@ -1,0 +1,472 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODO ESCUCHA · el artículo, leído en voz alta (solo Mecenas)
+   Para quién: quien escucha mientras camina, conduce, cocina o descansa la
+   vista, y quien prefiere oír a leer.
+   Gesto: la página se diseña para seguir con el oído, no con los ojos:
+   · arriba, una carátula con título, duración y capítulos como pistas;
+   · el texto se reduce a lo que se lee (titulares, párrafos y citas), más
+     grande y con más aire; el párrafo que suena se ilumina y los demás se
+     apagan, así se puede retomar la lectura con la vista en cualquier momento;
+   · abajo, una barra fija al alcance del pulgar con el botón grande;
+   · el acento es el oro de Mecenas, derivado del lacre.
+   Acceso: los estilos solo se aplican con data-cuota="mecenas". En otra cuota
+   se ve la edición Diario con una tarjeta que explica cómo desbloquearlo.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+:root:root[data-lectura="escucha"] {
+  --pliego-modo-nombre: "Escucha";
+}
+
+:root[data-lectura="escucha"][data-cuota="mecenas"] {
+  --pliego-escucha-acento: var(--pliego-oro);
+  --pliego-escucha-activo: light-dark(oklch(from var(--pliego-lacre-claro) 0.95 0.03 calc(h + 50)), oklch(from var(--pliego-lacre-oscuro) 0.27 0.045 calc(h + 50)));
+  --pliego-escucha-barra-alto: 7.5rem;
+
+  /* Voz: texto grande, óptico de lectura cómoda, más interlineado */
+  --pliego-titular-peso: 600;
+  --pliego-titular-ancho: 94%;
+  --pliego-texto-tamano: 1.3125rem;
+  --pliego-texto-interlineado: 1.7;
+  --pliego-texto-ejes: "GRAD" var(--pliego-grado), "opsz" 18;
+  --pliego-parrafo-espacio: 1.4em;
+
+  /* Portada: lista de escucha, miniatura cuadrada, sin entradillas */
+  --pliego-teaser-areas: "media cuerpo";
+  --pliego-teaser-columnas: 4.5rem minmax(0, 1fr);
+  --pliego-img-proporcion: 1;
+  --pliego-img-radio: var(--semantic-border-radius-default);
+  --pliego-ver-entradilla: none;
+  --pliego-ver-entradilla-apertura: block;
+  --pliego-rejilla-min: 100%;
+  --pliego-teaser-apertura-areas: "media cuerpo";
+  --pliego-teaser-apertura-columnas: 7rem minmax(0, 1fr);
+  --pliego-img-apertura-proporcion: 1;
+  --pliego-t-apertura: clamp(1.5rem, 4vw, 2rem);
+  --pliego-ancho: 52rem;
+  --pliego-portada-columnas: minmax(0, 1fr);
+  --pliego-portada-areas:
+    "apertura"
+    "destacadas"
+    "profundidad"
+    "ciencia"
+    "opinion"
+    "ultima"
+    "leido"
+    "lateral"
+    "pubmedio"
+    "mejora"
+    "boletin";
+}
+
+@media (min-width: 48rem) {
+  :root[data-lectura="escucha"][data-cuota="mecenas"] {
+    --pliego-teaser-columnas: 6rem minmax(0, 1fr);
+    --pliego-teaser-apertura-columnas: 12rem minmax(0, 1fr);
+    --pliego-escucha-barra-alto: 6rem;
+  }
+}
+
+@layer syx.app {
+  /* syx-reuse-file: reproductor propio; SYX no tiene un componente de audio. Los controles son atom-btn, atom-select y atom-progress */
+
+  /* ── Fuera del modo: nada de esto se ve ── */
+  .pliego-escucha,
+  .pliego-escucha-bloqueo {
+    display: none;
+  }
+
+  /* ── Bloqueo: modo Escucha sin cuota Mecenas ── */
+  :root[data-lectura="escucha"]:not([data-cuota="mecenas"]) .pliego-escucha-bloqueo {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    max-inline-size: 44rem;
+    inline-size: calc(100% - 2 * var(--pliego-margen));
+    margin-inline: auto;
+    padding: 1.5rem;
+    border: var(--pliego-grosor-regla) solid var(--pliego-oro);
+    border-radius: var(--semantic-border-radius-lg);
+    background: var(--pliego-papel-hundido);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+  }
+
+  .pliego-portada > .pliego-escucha-bloqueo {
+    grid-column: 1 / -1;
+    inline-size: 100%;
+  }
+
+  .pliego-escucha-bloqueo__sello {
+    inline-size: 2.75rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      linear-gradient(var(--pliego-oro), var(--pliego-oro)) 30% 50% / 3px 40% no-repeat,
+      linear-gradient(var(--pliego-oro), var(--pliego-oro)) 50% 50% / 3px 65% no-repeat,
+      linear-gradient(var(--pliego-oro), var(--pliego-oro)) 70% 50% / 3px 30% no-repeat;
+    box-shadow: inset 0 0 0 2px var(--pliego-oro);
+  }
+
+  .pliego-escucha-bloqueo__titulo {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: var(--pliego-t-h2);
+    font-weight: var(--pliego-titular-peso);
+  }
+
+  .pliego-escucha-bloqueo__texto {
+    color: var(--pliego-tinta-suave);
+    line-height: 1.55;
+  }
+
+  /* ── Artículo en modo Escucha ── */
+  :root[data-lectura="escucha"][data-cuota="mecenas"] body.pliego-pagina--articulo {
+    padding-block-end: var(--pliego-escucha-barra-alto);
+  }
+
+  /* Solo queda lo que se oye */
+  :root[data-lectura="escucha"][data-cuota="mecenas"] :is(
+    .pliego-ruta,
+    .pliego-compartir,
+    .pliego-articulo > .pliego-figura--portada,
+    .pliego-facil,
+    .pliego-claves,
+    .pliego-capitulo > .pliego-nota,
+    .pliego-capitulo > .pliego-ficha,
+    .pliego-capitulo > .pliego-figura--ancha,
+    .pliego-contexto,
+    .pliego-cronologia,
+    .pliego-relacionadas,
+    .pliego-recomendaciones
+  ) {
+    display: none;
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-articulo__cabecera {
+    justify-items: center;
+    text-align: center;
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-articulo__cintillo {
+    justify-content: center;
+  }
+
+  /* Reproductor: carátula y pistas */
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-escucha {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1rem, 4vw, 1.75rem);
+    border: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-escucha-acento);
+    border-radius: var(--semantic-border-radius-lg);
+    background: var(--pliego-papel-hundido);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+  }
+
+  .pliego-escucha__cabecera {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .pliego-escucha__portada {
+    inline-size: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--semantic-border-radius-default);
+    box-shadow: var(--semantic-shadow-md);
+  }
+
+  .pliego-escucha__datos {
+    display: grid;
+    gap: 0.25rem;
+    min-inline-size: 0;
+  }
+
+  .pliego-escucha__antetitulo {
+    font-size: var(--pliego-t-mini);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    color: var(--pliego-oro-texto);
+  }
+
+  .pliego-escucha__titulo {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 1.125rem;
+    font-weight: var(--pliego-titular-peso);
+    line-height: 1.2;
+  }
+
+  .pliego-escucha__duracion {
+    font-size: var(--pliego-t-ui);
+    font-variant-numeric: tabular-nums;
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-escucha__capitulos {
+    display: grid;
+    padding: 0;
+    list-style: none;
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+  }
+
+  .pliego-escucha__capitulo {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    inline-size: 100%;
+    min-block-size: 3rem;
+    padding: 0.5rem 0.25rem;
+    border: 0;
+    border-block-end: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+    background: none;
+    color: var(--pliego-tinta);
+    font: inherit;
+    font-size: var(--pliego-t-secundario);
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .pliego-escucha__capitulo:hover {
+    background: var(--pliego-papel-realce);
+  }
+
+  .pliego-escucha__capitulo[aria-current="true"] {
+    font-weight: var(--semantic-font-weight-bold);
+  }
+
+  .pliego-escucha__capitulo[aria-current="true"] .pliego-escucha__num {
+    color: var(--pliego-escucha-acento);
+  }
+
+  .pliego-escucha__num,
+  .pliego-escucha__tiempo {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variant-numeric: tabular-nums;
+    color: var(--pliego-tinta-tenue);
+  }
+
+  .pliego-escucha__aviso {
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-tenue);
+  }
+
+  /* Barra fija al alcance del pulgar */
+  .pliego-escucha__barra {
+    /* syx-allow R03: la barra del reproductor acompaña toda la escucha */
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: var(--semantic-z-index-sticky);
+    display: grid;
+    gap: 0.5rem;
+    padding: 0 var(--pliego-margen) calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    background: var(--pliego-papel);
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    box-shadow: var(--semantic-shadow-lg);
+    --component-progress-fill: var(--pliego-escucha-acento);
+    --component-progress-height: 0.25rem;
+    --component-progress-border-radius: 0;
+  }
+
+  .pliego-escucha__progreso {
+    inline-size: calc(100% + 2 * var(--pliego-margen));
+    margin-inline: calc(-1 * var(--pliego-margen));
+  }
+
+  .pliego-escucha__controles {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    grid-template-areas:
+      "ahora ahora ahora ahora"
+      "velocidad anterior play siguiente";
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    max-inline-size: 52rem;
+    inline-size: 100%;
+    margin-inline: auto;
+  }
+
+  .pliego-escucha__ahora {
+    grid-area: ahora;
+    overflow: hidden;
+    font-size: var(--pliego-t-ui);
+    font-weight: var(--semantic-font-weight-medium);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .pliego-escucha__controles [data-escucha="anterior"] { grid-area: anterior; }
+  .pliego-escucha__controles [data-escucha="siguiente"] { grid-area: siguiente; }
+  .pliego-escucha__play { grid-area: play; }
+  .pliego-escucha__velocidad { grid-area: velocidad; justify-self: start; }
+
+  /* atom-select se coloca, no se repinta: solo su ancho */
+  .pliego-escucha__velocidad .atom-select {
+    inline-size: 6rem;
+  }
+
+  @media (min-width: 48rem) {
+    .pliego-escucha__controles {
+      grid-template-columns: minmax(0, 1fr) auto auto auto auto;
+      grid-template-areas: "ahora anterior play siguiente velocidad";
+      column-gap: 1rem;
+    }
+
+    .pliego-escucha__velocidad { justify-self: end; }
+  }
+
+  /* Icono de reproducir / pausa dibujado con CSS */
+  .pliego-escucha__icono {
+    display: block;
+    inline-size: 1.125rem;
+    aspect-ratio: 1;
+    background: currentColor;
+    clip-path: polygon(18% 6%, 92% 50%, 18% 94%);
+  }
+
+  .pliego-escucha__play[aria-pressed="true"] .pliego-escucha__icono {
+    clip-path: polygon(12% 6%, 40% 6%, 40% 94%, 12% 94%, 12% 6%, 60% 6%, 88% 6%, 88% 94%, 60% 94%, 60% 6%);
+  }
+
+  /* El texto sigue a la voz */
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-articulo.is-escuchando :is(.pliego-capitulo > p, .pliego-capitulo__titulo, .pliego-cita, .pliego-articulo__entradilla) {
+    color: var(--pliego-tinta-tenue);
+  }
+
+  /* Misma cadena que el atenuado, más .is-leyendo: siempre gana al resto */
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-articulo.is-escuchando :is(.pliego-capitulo > p, .pliego-capitulo__titulo, .pliego-cita__texto p, .pliego-articulo__entradilla, .pliego-articulo__titulo).is-leyendo {
+    color: var(--pliego-tinta);
+    background: var(--pliego-escucha-activo);
+    box-shadow: inset 3px 0 0 var(--pliego-escucha-acento);
+    /* El fondo sale del margen y el texto no se mueve de su sitio */
+    margin-inline: -0.875rem;
+    padding: 0.25rem 0.875rem;
+    border-radius: var(--semantic-border-radius-sm);
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-articulo.is-escuchando .pliego-cita:has(.is-leyendo) .pliego-cita__autor {
+    color: var(--pliego-tinta-suave);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :root[data-lectura="escucha"][data-cuota="mecenas"] :is(.pliego-capitulo > p, .pliego-capitulo__titulo, .pliego-cita__texto p) {
+      transition: color var(--semantic-duration-base) var(--semantic-easing-standard), background-color var(--semantic-duration-base) var(--semantic-easing-standard);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root[data-lectura="escucha"][data-cuota="mecenas"] :is(.pliego-capitulo > p, .pliego-capitulo__titulo, .pliego-cita__texto p) {
+      transition: none;
+    }
+  }
+
+  /* ── Portada en modo Escucha: lista de escucha ── */
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-rejilla {
+    gap: 0;
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-rejilla > .pliego-teaser {
+    align-items: center;
+    padding-block: 0.875rem;
+    border-block-end: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-teaser--opinion {
+    grid-template-areas: "media cuerpo";
+    grid-template-columns: var(--pliego-teaser-columnas);
+    padding-block-start: 0.875rem;
+    border-block-start: 0;
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-teaser--opinion::before {
+    content: "";
+    grid-area: media;
+    aspect-ratio: 1;
+    border-radius: var(--pliego-img-radio);
+    background: var(--pliego-papel-realce);
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-teaser__titulo .pliego-teaser__enlace::before {
+    content: "";
+    display: inline-block;
+    inline-size: 0.7em;
+    aspect-ratio: 1;
+    margin-inline-end: 0.4em;
+    background: var(--pliego-escucha-acento);
+    clip-path: polygon(10% 0, 100% 50%, 10% 100%);
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-teaser__tiempo {
+    display: none;
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-teaser--apertura {
+    align-items: center;
+    padding: 1rem;
+    border-radius: var(--semantic-border-radius-lg);
+    background: var(--pliego-papel-hundido);
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-escucha-acento);
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-teaser--apertura .pliego-teaser__entradilla {
+    font-size: 1rem;
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-teaser__cintillo .pliego-genero {
+    display: none;
+  }
+
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-portada .pliego-teaser__media img {
+    border-radius: var(--pliego-img-radio);
+  }
+
+  @media (forced-colors: active) {
+    .pliego-escucha__icono { background: ButtonText; }
+    /* Misma cadena que el atenuado, más .is-leyendo: siempre gana al resto */
+  :root[data-lectura="escucha"][data-cuota="mecenas"] .pliego-articulo.is-escuchando :is(.pliego-capitulo > p, .pliego-capitulo__titulo, .pliego-cita__texto p, .pliego-articulo__entradilla, .pliego-articulo__titulo).is-leyendo { outline: 2px solid Highlight; }
+  }
+}
+
+/* Muestra del selector: ondas de sonido en oro y sello «Mecenas» */
+.pliego-opcion--escucha {
+  --pliego-muestra-papel: var(--semantic-color-bg-emphasis);
+  --pliego-muestra-tinta: var(--semantic-color-on-emphasis);
+  --pliego-muestra-acento: var(--pliego-oro);
+}
+
+@layer syx.app {
+  .pliego-opcion--escucha .pliego-opcion__muestra {
+    background:
+      linear-gradient(var(--pliego-oro), var(--pliego-oro)) 26% 50% / 3px 34% no-repeat,
+      linear-gradient(var(--pliego-oro), var(--pliego-oro)) 42% 50% / 3px 62% no-repeat,
+      linear-gradient(var(--pliego-oro), var(--pliego-oro)) 58% 50% / 3px 44% no-repeat,
+      linear-gradient(var(--pliego-oro), var(--pliego-oro)) 74% 50% / 3px 24% no-repeat,
+      var(--pliego-muestra-papel);
+  }
+
+  .pliego-opcion__sello {
+    display: inline-block;
+    margin-inline-end: 0.25rem;
+    padding: 0 0.4rem;
+    border: 1px solid var(--pliego-oro);
+    border-radius: var(--semantic-border-radius-full);
+    font-size: 0.6875rem;
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--pliego-oro-texto);
+  }
+}

@@ -1,0 +1,130 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODO DIARIO · la edición de siempre
+   Para quién: el lector diario que entra, recorre la jerarquía y elige.
+   Color: los mínimos de marca tal cual (papel, tinta, lacre).
+   Voz: Roboto Serif con titular firme (peso 640) y algo estrecho (92 %),
+   texto neutro. En móvil, lista densa con miniatura; en tablet, rejilla; en
+   escritorio, apertura a dos columnas con columna lateral.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+:root:not([data-lectura]),
+:root[data-lectura="diario"],
+:root[data-lectura="escucha"]:not([data-cuota="mecenas"]) {
+  --pliego-modo-nombre: "Diario";
+
+  /* Color: los mínimos de marca, sin tocar */
+
+  /* Voz: titular de prensa firme y algo estrecho, texto neutro */
+  --pliego-titular-peso: 640;
+  --pliego-titular-ancho: 92%;
+  --pliego-texto-ancho: 100%;
+
+  --pliego-texto-tamano: 1.1875rem;
+  --pliego-texto-interlineado: 1.6;
+
+  /* 3 · Forma */
+  --semantic-border-radius-default: 0.25rem;
+  --pliego-radio: 0.25rem;
+
+  /* 4 · Disposición móvil: lista densa con miniatura */
+  --pliego-teaser-areas: "cuerpo media";
+  --pliego-teaser-columnas: minmax(0, 1fr) 6.5rem;
+  --pliego-img-proporcion: 1;
+  --pliego-ver-entradilla: none;
+  --pliego-hueco-teaser: 0.375rem;
+}
+
+@media (min-width: 48rem) {
+  :root:not([data-lectura]),
+  :root[data-lectura="diario"],
+  :root[data-lectura="escucha"]:not([data-cuota="mecenas"]) {
+    --pliego-teaser-areas: "media" "cuerpo";
+    --pliego-teaser-columnas: minmax(0, 1fr);
+    --pliego-img-proporcion: 3 / 2;
+    --pliego-ver-entradilla: block;
+    --pliego-teaser-apertura-areas: "cuerpo media";
+    --pliego-teaser-apertura-columnas: minmax(0, 2fr) minmax(0, 3fr);
+    --pliego-portada-columnas: repeat(2, minmax(0, 1fr));
+    --pliego-portada-areas:
+      "ultima ultima"
+      "apertura apertura"
+      "destacadas destacadas"
+      "leido lateral"
+      "opinion opinion"
+      "pubmedio pubmedio"
+      "profundidad profundidad"
+      "mejora mejora"
+      "ciencia ciencia"
+      "boletin boletin";
+  }
+}
+
+@media (min-width: 64rem) {
+  :root:not([data-lectura]),
+  :root[data-lectura="diario"],
+  :root[data-lectura="escucha"]:not([data-cuota="mecenas"]) {
+    --pliego-portada-columnas: minmax(0, 1fr) 19rem;
+    --pliego-portada-areas:
+      "apertura ultima"
+      "apertura leido"
+      "destacadas leido"
+      "destacadas lateral"
+      "opinion opinion"
+      "pubmedio pubmedio"
+      "profundidad profundidad"
+      "mejora mejora"
+      "ciencia boletin";
+    --pliego-rejilla-min: 14rem;
+  }
+}
+
+@layer syx.app {
+  /* La columna lateral de escritorio separa con una regla vertical */
+  @media (min-width: 64rem) {
+    :root:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="escucha"]:not([data-cuota="mecenas"])) .pliego-portada__ultima,
+    :root:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="escucha"]:not([data-cuota="mecenas"])) .pliego-portada__leido {
+      padding-inline-start: var(--pliego-hueco);
+      border-inline-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    }
+
+    :root:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="escucha"]:not([data-cuota="mecenas"])) .pliego-ultima__lista {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    :root:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="escucha"]:not([data-cuota="mecenas"])) .pliego-portada__boletin {
+      align-self: start;
+    }
+
+    :root:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="escucha"]:not([data-cuota="mecenas"])) .pliego-portada__boletin .pliego-boletin__titulo {
+      font-size: 1.375rem;
+    }
+  }
+
+  /* Móvil: cada pieza de la lista se separa con una regla fina */
+  @media (max-width: 47.99rem) {
+    :root:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="escucha"]:not([data-cuota="mecenas"])) .pliego-rejilla > .pliego-teaser:not(.pliego-teaser--opinion) {
+      padding-block-start: var(--pliego-hueco);
+      border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+    }
+
+    :root:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="escucha"]:not([data-cuota="mecenas"])) .pliego-rejilla {
+      gap: 0;
+    }
+
+    :root:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="escucha"]:not([data-cuota="mecenas"])) .pliego-rejilla > .pliego-teaser {
+      padding-block-end: var(--pliego-hueco);
+    }
+  }
+}
+
+/* Muestra del selector: cada modo pinta su propia tarjeta */
+.pliego-opcion--diario {
+  --pliego-muestra-papel: var(--semantic-color-bg-primary);
+  --pliego-muestra-tinta: var(--semantic-color-text-primary);
+  --pliego-muestra-acento: var(--semantic-color-primary);
+  --pliego-muestra-peso: 640;
+  --pliego-muestra-ancho: 92%;
+  --pliego-muestra-estilo: normal;
+}

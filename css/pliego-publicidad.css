@@ -1,0 +1,599 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLIEGO · mapa de publicidad y escalera de cuotas
+
+   Idea: cuanto más paga el lector, menos intrusiva es la publicidad.
+     Abierto  (gratis)   · todos los formatos estándar, nunca los prohibidos
+     Lector   (4,99 €)   · sin vídeo, piel ni anclaje; formatos pequeños; nada fijo
+     Habitual (8,99 €)   · solo nativos marcados y un patrocinio de sección
+     Mecenas  (14,99 €)  · sin publicidad
+
+   Cómo funciona, igual que los modos de lectura:
+   · la cuota vive en <html data-cuota="…">; el mapa, en <html data-mapa-pub>;
+   · cada hueco declara en el HTML a qué cuotas se sirve (data-cuotas) y qué
+     formato y medida tiene (data-formato, data-medida);
+   · el CSS decide qué se ve, cómo de fijo es y cuánto aire lleva, con tokens
+     --pliego-pub-* que leen la capa semántica de SYX. El HTML no cambia.
+   · un contador CSS cuenta solo los anuncios que se pintan y lo dice en el pie.
+
+   Estándares aplicados: formatos IAB (billboard, leaderboard, robapáginas,
+   media página, in-read, outstream, anclaje, piel, nativo), Better Ads
+   Standards (sin intersticiales, sin pop-ups, sin vídeo con sonido, anclaje
+   por debajo del 30 % de la pantalla y con cierre), espacio reservado para
+   no mover el contenido (CLS), y publicidad siempre identificada como tal.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+/* ── 1 · Tokens de publicidad ─────────────────────────────────────────────── */
+:root {
+  /* Medidas IAB (son medidas de formato, no de diseño) */
+  --pliego-pub-ancho-billboard: 320px;
+  --pliego-pub-ancho-leaderboard: 320px;
+  --pliego-pub-ancho-intermedio: 300px;
+  --pliego-pub-ancho-robapaginas: 300px;
+  --pliego-pub-ancho-anclaje: 320px;
+  --pliego-pub-ancho-video: 40rem;
+
+  /* Marco: siempre de la capa semántica, así cada modo de lectura lo repinta */
+  --pliego-pub-fondo: var(--semantic-color-bg-secondary);
+  --pliego-pub-regla: var(--semantic-color-border-subtle);
+  --pliego-pub-etiqueta: var(--semantic-color-text-tertiary);
+  --pliego-pub-nativo-fondo: var(--semantic-color-bg-tertiary);
+  --pliego-mejora-fondo: var(--semantic-color-tone-primary-subtle-bg);
+  --pliego-mejora-borde: var(--semantic-color-primary);
+  --pliego-mapa-color: var(--semantic-color-primary);
+  --pliego-mapa-tinta: var(--semantic-color-on-primary);
+  /* Alto real del anclaje, calculado (no estimado): creatividad + etiqueta +
+     rellenos + borde + zona segura. El cuerpo reserva exactamente ese hueco. */
+  --pliego-pub-anclaje-creatividad: 50px;
+  --pliego-pub-etiqueta-alto: calc(var(--pliego-t-mini) * 1.5 + 0.5rem);
+  --pliego-pub-anclaje-alto: calc(var(--pliego-pub-anclaje-creatividad) + var(--pliego-pub-etiqueta-alto) + 1rem + var(--pliego-grosor-regla) + env(safe-area-inset-bottom, 0px));
+  --pliego-piel-ancho: 15rem;
+  --pliego-piel-separacion: 2rem;
+  --pliego-logo-filtro: none;
+
+  /* Escalera de intrusión: valores de la cuota Abierto */
+  --pliego-cuota-nombre: "Abierto";
+  --pliego-pub-adhesivo: sticky;
+  --pliego-pub-respiro: var(--semantic-space-layout-sm);
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --pliego-pub-ancho-leaderboard: 728px;
+    --pliego-pub-ancho-anclaje: 728px;
+    --pliego-pub-anclaje-creatividad: 90px;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --pliego-pub-ancho-billboard: 970px;
+    --pliego-pub-ancho-intermedio: 970px;
+  }
+}
+
+/* En oscuro, el logotipo del patrocinador se pasa a blanco para mantener contraste */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --pliego-logo-filtro: brightness(0) invert(1); }
+}
+:root[data-theme="dark"] { --pliego-logo-filtro: brightness(0) invert(1); }
+
+/* Cada peldaño de la escalera solo cambia tokens */
+:root[data-cuota="lector"] {
+  --pliego-cuota-nombre: "Lector";
+  --pliego-pub-adhesivo: static;
+  --pliego-pub-respiro: var(--semantic-space-layout-md);
+}
+
+:root[data-cuota="habitual"] {
+  --pliego-cuota-nombre: "Habitual";
+  --pliego-pub-adhesivo: static;
+  --pliego-pub-respiro: var(--semantic-space-layout-md);
+}
+
+:root[data-cuota="mecenas"] {
+  --pliego-cuota-nombre: "Mecenas";
+  --pliego-pub-adhesivo: static;
+}
+
+@layer syx.app {
+  /* syx-reuse-file: huecos publicitarios propios; SYX no trae formatos IAB, y mol-card no admite el etiquetado obligatorio ni la reserva de espacio */
+
+  /* ── 2 · Qué se sirve a cada cuota ──────────────────────────────────────── */
+  /* Contenido por cuota (textos de mejora, botones de la cabecera) */
+  :root:is(:not([data-cuota]), [data-cuota="abierto"]) [data-para]:not([data-para~="abierto"]),
+  :root[data-cuota="lector"] [data-para]:not([data-para~="lector"]),
+  :root[data-cuota="habitual"] [data-para]:not([data-para~="habitual"]),
+  :root[data-cuota="mecenas"] [data-para]:not([data-para~="mecenas"]) {
+    display: none;
+  }
+
+  /* Huecos que no corresponden a la cuota: fuera (salvo con el mapa encendido) */
+  :root:is(:not([data-cuota]), [data-cuota="abierto"]):not([data-mapa-pub]) .pliego-pub:not([data-cuotas~="abierto"]),
+  :root[data-cuota="lector"]:not([data-mapa-pub]) .pliego-pub:not([data-cuotas~="lector"]),
+  :root[data-cuota="habitual"]:not([data-mapa-pub]) .pliego-pub:not([data-cuotas~="habitual"]),
+  :root[data-cuota="mecenas"]:not([data-mapa-pub]) .pliego-pub {
+    display: none;
+  }
+
+  /* ── 3 · Recuento de anuncios pintados (solo CSS) ───────────────────────── */
+  body.pliego-pagina {
+    counter-reset: pliego-anuncios;
+  }
+
+  .pliego-pub {
+    counter-increment: pliego-anuncios;
+  }
+
+  /* El nativo también es pieza numerada en Exprés: suma en los dos contadores */
+  :root .pliego-teaser.pliego-pub {
+    counter-increment: titular 1 pliego-anuncios 1;
+  }
+
+  .pliego-recuento {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 0.5rem;
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-recuento__cuota::before {
+    content: "Cuota " var(--pliego-cuota-nombre) " ·";
+  }
+
+  .pliego-recuento__n::before {
+    content: "anuncios en esta página: " counter(pliego-anuncios);
+  }
+
+  /* ── 4 · Hueco estándar ─────────────────────────────────────────────────── */
+  div.pliego-pub {
+    display: grid;
+    justify-items: center;
+    gap: 0.375rem;
+    margin-block: var(--pliego-pub-respiro);
+    min-inline-size: 0;
+  }
+
+  .pliego-pub__etiqueta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.25rem 1rem;
+    inline-size: 100%;
+    max-inline-size: var(--pliego-pub-ancho, 100%);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    font-variant-caps: var(--pliego-cintillo-variante);
+    color: var(--pliego-pub-etiqueta);
+  }
+
+  .pliego-pub__quitar {
+    display: inline-block;
+    padding-block: 0.25rem;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-transform: none;
+    letter-spacing: 0;
+    font-variant-caps: normal;
+  }
+
+  .pliego-pub__creatividad {
+    display: block;
+    inline-size: 100%;
+    max-inline-size: var(--pliego-pub-ancho, 100%);
+    background: var(--pliego-pub-fondo);
+    outline: var(--pliego-grosor-regla) solid var(--pliego-pub-regla);
+  }
+
+  .pliego-pub__creatividad img {
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .pliego-pub__nota {
+    max-inline-size: var(--pliego-pub-ancho, 100%);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-pub-etiqueta);
+  }
+
+  .pliego-pub--billboard { --pliego-pub-ancho: var(--pliego-pub-ancho-billboard); }
+  .pliego-pub--leaderboard { --pliego-pub-ancho: var(--pliego-pub-ancho-leaderboard); }
+  .pliego-pub--intermedio { --pliego-pub-ancho: var(--pliego-pub-ancho-intermedio); }
+  .pliego-pub--mediapagina,
+  .pliego-pub--inread { --pliego-pub-ancho: var(--pliego-pub-ancho-robapaginas); }
+  .pliego-pub--video { --pliego-pub-ancho: var(--pliego-pub-ancho-video); }
+  .pliego-pub--anclaje { --pliego-pub-ancho: var(--pliego-pub-ancho-anclaje); }
+
+  /* Franja bajo la cabecera */
+  .pliego-franja-pub {
+    max-inline-size: var(--pliego-ancho-cabecera);
+    margin-inline: auto;
+    padding-inline: var(--pliego-margen);
+  }
+
+  .pliego-franja-pub > .pliego-pub {
+    margin-block: 1rem 0;
+  }
+
+  /* In-read: separado del texto por arriba y por abajo */
+  .pliego-pub--inread,
+  .pliego-pub--video {
+    padding-block: 1rem;
+    border-block: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+  }
+
+  /* Media página: la única pieza que puede acompañar el scroll, y solo en Abierto */
+  .pliego-portada__lateral {
+    min-inline-size: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .pliego-portada__lateral > .pliego-pub {
+      /* syx-allow R03: la media página acompaña la lectura solo en la cuota Abierto (token) */
+      position: var(--pliego-pub-adhesivo);
+      inset-block-start: 1rem;
+      margin-block: 0;
+    }
+  }
+
+  /* Anclaje inferior: menos del 30 % de la pantalla y siempre con cierre */
+  .pliego-pub--anclaje {
+    /* syx-allow R03: formato de anclaje IAB, fijo abajo y con botón de cierre */
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: var(--semantic-z-index-sticky);
+    padding: 0.5rem var(--pliego-margen) calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    grid-template-columns: minmax(0, var(--pliego-pub-ancho)) auto;
+    grid-template-areas: "etiqueta cerrar" "creatividad cerrar";
+    grid-template-rows: var(--pliego-pub-etiqueta-alto) var(--pliego-pub-anclaje-creatividad);
+    justify-content: center;
+    align-items: center;
+    row-gap: 0;
+    column-gap: 0.75rem;
+    box-sizing: border-box;
+    block-size: var(--pliego-pub-anclaje-alto);
+    background: var(--pliego-papel);
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    box-shadow: var(--semantic-shadow-lg);
+  }
+
+  /* div.pliego-pub da margen vertical a los huecos en flujo; el anclaje no lo
+     quiere: con margen quedaba 15 px por encima del borde de la pantalla */
+  div.pliego-pub.pliego-pub--anclaje {
+    margin: 0;
+  }
+
+  .pliego-pub--anclaje .pliego-pub__etiqueta { grid-area: etiqueta; }
+  .pliego-pub--anclaje .pliego-pub__creatividad { grid-area: creatividad; }
+  .pliego-pub__cerrar { grid-area: cerrar; }
+
+  :root:is(:not([data-cuota]), [data-cuota="abierto"]) body:has(.pliego-pub--anclaje:not([hidden])) {
+    padding-block-end: var(--pliego-pub-anclaje-alto);
+  }
+
+  /* Piel: dos columnas fuera de la página, a la altura de la portada (no de
+     la cabecera ni de la franja), que acompañan el scroll sin salir de ella.
+     Solo en la portada y solo si caben enteras: 82 rem de página + 2 × 17 rem. */
+  div.pliego-pub--piel,
+  div.pliego-pub[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 116rem) {
+    .pliego-portada {
+      /* syx-allow R03: la portada es el bloque contenedor de la piel */
+      position: relative;
+    }
+
+    div.pliego-pub--piel {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      /* syx-allow R03: la piel ocupa toda la altura de la portada, por fuera de sus márgenes */
+      position: absolute;
+      inset-block: 0;
+      inset-inline: calc(-1 * (var(--pliego-piel-ancho) + var(--pliego-piel-separacion)));
+      margin: 0;
+      pointer-events: none;
+    }
+
+    .pliego-pub__lado {
+      /* syx-allow R03: cada lado acompaña el scroll dentro de la altura de la portada */
+      position: sticky;
+      inset-block-start: 1rem;
+      display: grid;
+      gap: 0.25rem;
+      inline-size: var(--pliego-piel-ancho);
+      pointer-events: auto;
+    }
+
+    /* Nunca más alta que la pantalla menos el anclaje: la llamada a la acción
+       del pie de la creatividad siempre queda a la vista */
+    .pliego-pub__lado img {
+      inline-size: 100%;
+      max-block-size: calc(100svh - 2rem - var(--pliego-pub-anclaje-alto) - 1.5rem);
+      object-fit: contain;
+      object-position: top;
+    }
+
+    .pliego-pub__lado::before {
+      content: "Publicidad";
+      font-family: var(--pliego-fuente-ui);
+      font-stretch: var(--pliego-ui-ancho);
+      font-variation-settings: var(--pliego-ui-ejes);
+      font-size: var(--pliego-t-mini);
+      letter-spacing: var(--pliego-cintillo-espaciado);
+      text-transform: var(--pliego-cintillo-caja);
+      color: var(--pliego-pub-etiqueta);
+    }
+  }
+
+  /* ── 5 · Patrocinio de sección ─────────────────────────────────────────── */
+  .pliego-patrocinio {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-inline-start: auto;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-pub-etiqueta);
+  }
+
+  .pliego-patrocinio img {
+    block-size: 1.5rem;
+    inline-size: auto;
+    filter: var(--pliego-logo-filtro);
+  }
+
+  /* ── 6 · Nativo de primera parte: con el periódico, pero que se note ───── */
+  .pliego-teaser--patrocinado {
+    grid-column: 1 / -1;
+    padding: var(--pliego-hueco);
+    background: var(--pliego-pub-nativo-fondo);
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-pub-regla);
+    border-radius: var(--pliego-radio);
+    --pliego-seccion: var(--pliego-tinta-suave);
+  }
+
+  /* La creatividad del nativo nunca se recorta: en móvil va encima, entera */
+  .pliego-teaser.pliego-teaser--patrocinado {
+    grid-template-areas: "media" "cuerpo";
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pliego-teaser--patrocinado .pliego-teaser__media img {
+    aspect-ratio: 3 / 2;
+    object-fit: contain;
+  }
+
+  @media (min-width: 48rem) {
+    .pliego-teaser.pliego-teaser--patrocinado {
+      grid-template-areas: "cuerpo media";
+      grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
+    }
+  }
+
+  .pliego-teaser--patrocinado .pliego-teaser__autor {
+    font-weight: var(--semantic-font-weight-regular);
+    font-style: italic;
+  }
+
+  /* ── 7 · Recomendaciones de terceros ────────────────────────────────────── */
+  .pliego-recomendaciones {
+    display: grid;
+    gap: 1rem;
+    max-inline-size: var(--pliego-ancho);
+    inline-size: 100%;
+    margin-inline: auto;
+    padding-inline: var(--pliego-margen);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+  }
+
+  .pliego-recomendaciones__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    padding-block-start: 0.5rem;
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla);
+  }
+
+  .pliego-recomendaciones__titulo {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-bloque);
+    font-weight: var(--semantic-font-weight-bold);
+  }
+
+  .pliego-recomendaciones .pliego-pub__etiqueta {
+    inline-size: auto;
+  }
+
+  .pliego-recomendaciones__lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    gap: 1rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pliego-recomendaciones__lista a {
+    display: grid;
+    gap: 0.375rem;
+    text-decoration: none;
+    font-size: var(--pliego-t-secundario);
+    line-height: 1.35;
+  }
+
+  .pliego-recomendaciones__lista img {
+    inline-size: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--pliego-img-radio);
+  }
+
+  .pliego-recomendaciones__lista small {
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-pub-etiqueta);
+  }
+
+  .pliego-recomendaciones__lista a:hover span {
+    text-decoration: underline;
+  }
+
+  /* ── 8 · Aviso de mejora de cuota ───────────────────────────────────────── */
+  /* syx-reuse: checked mol-alert (anuncia estados del sistema, con rol de alerta) — esto es una invitación editorial, sin rol */
+  .pliego-mejora {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--pliego-radio);
+    border: var(--pliego-grosor-regla) solid var(--pliego-mejora-borde);
+    background: var(--pliego-mejora-fondo);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-secundario);
+    line-height: 1.5;
+  }
+
+  .pliego-mejora__texto {
+    flex: 1 1 22rem;
+    min-inline-size: 0;
+  }
+
+  .pliego-insignia {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3em;
+    padding: 0.25rem 0.75rem;
+    border: var(--pliego-grosor-regla) solid var(--pliego-acento);
+    border-radius: var(--semantic-border-radius-full);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+    font-weight: var(--semantic-font-weight-bold);
+    color: var(--pliego-acento);
+  }
+
+  .pliego-insignia span {
+    font-weight: var(--semantic-font-weight-regular);
+    color: var(--pliego-tinta-suave);
+  }
+
+  /* ── 9 · Mapa de publicidad (data-mapa-pub) ─────────────────────────────── */
+  :root[data-mapa-pub] .pliego-pub {
+    /* syx-allow R03: ancla la etiqueta del mapa sobre cada hueco */
+    position: relative;
+    outline: 2px dashed var(--pliego-mapa-color);
+    outline-offset: 4px;
+  }
+
+  :root[data-mapa-pub] .pliego-pub--anclaje {
+    /* syx-allow R03: en el mapa, el anclaje sigue fijo abajo */
+    position: fixed;
+  }
+
+  :root[data-mapa-pub] .pliego-pub--piel {
+    /* syx-allow R03: en el mapa, la piel sigue a los lados de la portada */
+    position: absolute;
+  }
+
+  :root[data-mapa-pub] .pliego-pub::after {
+    content: attr(data-formato) " · " attr(data-medida) "\A" "Cuotas: " attr(data-cuotas);
+    /* syx-allow R03: etiqueta del mapa sobre la esquina del hueco */
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: 2;
+    max-inline-size: 100%;
+    padding: 0.25rem 0.5rem;
+    background: var(--pliego-mapa-color);
+    color: var(--pliego-mapa-tinta);
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-size: 0.6875rem;
+    font-style: normal;
+    font-weight: var(--semantic-font-weight-medium);
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1.35;
+    white-space: pre-wrap;
+    text-align: start;
+    pointer-events: none;
+  }
+
+  /* Huecos que tu cuota no recibe: se ven como fantasma y no cuentan */
+  :root[data-mapa-pub]:is(:not([data-cuota]), [data-cuota="abierto"]) .pliego-pub:not([data-cuotas~="abierto"]),
+  :root[data-mapa-pub][data-cuota="lector"] .pliego-pub:not([data-cuotas~="lector"]),
+  :root[data-mapa-pub][data-cuota="habitual"] .pliego-pub:not([data-cuotas~="habitual"]),
+  :root[data-mapa-pub][data-cuota="mecenas"] .pliego-pub {
+    counter-increment: none;
+    opacity: 0.38;
+    filter: grayscale(1);
+    outline-style: dotted;
+  }
+
+  :root[data-mapa-pub][data-cuota="mecenas"] .pliego-pub--anclaje,
+  :root[data-mapa-pub]:is([data-cuota="lector"], [data-cuota="habitual"]) .pliego-pub--anclaje {
+    /* syx-allow R03: el fantasma del anclaje vuelve al flujo para no tapar la página */
+    position: static;
+    box-shadow: none;
+  }
+
+  /* El anclaje espera a que el lector pase la primera pantalla: arriba del
+     todo ya está el billboard y dos formatos a la vez saturan. Sin JS, se ve. */
+  .pliego-pub--anclaje.is-esperando {
+    translate: 0 100%;
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pliego-pub--anclaje {
+      transition:
+        translate var(--semantic-duration-base) var(--semantic-easing-out),
+        visibility 0s linear;
+    }
+
+    .pliego-pub--anclaje.is-esperando {
+      transition:
+        translate var(--semantic-duration-base) var(--semantic-easing-out),
+        visibility 0s linear var(--semantic-duration-base);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pliego-pub--anclaje { transition: none; }
+  }
+
+  @media (forced-colors: active) {
+    .pliego-pub__creatividad,
+    .pliego-mejora { outline: 1px solid CanvasText; }
+  }
+}

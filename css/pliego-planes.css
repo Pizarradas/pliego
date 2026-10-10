@@ -1,0 +1,290 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLIEGO · página de cuotas
+   Las tarjetas son mol-card de SYX; la cuota destacada solo reescribe sus
+   tokens. La escala de publicidad es un dato (--pliego-nivel) que el CSS dibuja.
+   Mensual o anual se elige con :has(), sin JS. Hereda los modos de lectura.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+:root {
+  --pliego-plan-min: 15rem;
+  --pliego-escala-lleno: var(--semantic-color-primary);
+  --pliego-escala-vacio: var(--semantic-color-border-default);
+}
+
+/* La cuota destacada: solo tokens de mol-card */
+.pliego-plan--destacado {
+  --component-card-border-color: var(--semantic-color-primary);
+  --component-card-border-color-hover: var(--semantic-color-primary);
+  --component-card-border-width: var(--semantic-border-width-thick);
+}
+
+@layer syx.app {
+  /* syx-reuse-file: maqueta de la página de cuotas; las tarjetas son mol-card y la tabla atom-table */
+
+  .pliego-planes {
+    display: grid;
+    gap: var(--pliego-hueco-bloque);
+    max-inline-size: var(--pliego-ancho);
+    margin-inline: auto;
+    padding-inline: var(--pliego-margen);
+    padding-block: 2rem var(--pliego-hueco-bloque);
+  }
+
+  .pliego-planes__cabecera {
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .pliego-planes__cintillo {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    font-variant-caps: var(--pliego-cintillo-variante);
+    color: var(--pliego-acento);
+  }
+
+  .pliego-planes__titulo {
+    max-inline-size: 18ch;
+    font-size: min(var(--pliego-t-h1), 3.75rem);
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+    letter-spacing: var(--pliego-titular-espaciado);
+    line-height: 1.05;
+  }
+
+  .pliego-planes__entradilla {
+    max-inline-size: 40rem;
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    font-size: var(--pliego-t-entradilla);
+    line-height: 1.5;
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-facturacion {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+  }
+
+  .pliego-facturacion__leyenda {
+    float: inline-start;
+    inline-size: 100%;
+    margin-block-end: 0.5rem;
+    padding: 0;
+    text-align: center;
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-tenue);
+  }
+
+  /* Rejilla de cuotas */
+  .pliego-planes__lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--pliego-plan-min)), 1fr));
+    gap: var(--pliego-hueco);
+    align-items: stretch;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pliego-plan {
+    display: grid;
+    min-inline-size: 0;
+  }
+
+  .pliego-plan__tarjeta {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .pliego-plan__nombre {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 1.625rem;
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+  }
+
+  .pliego-plan__distintivo {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: var(--pliego-cintillo-espaciado);
+    text-transform: var(--pliego-cintillo-caja);
+    font-variant-caps: var(--pliego-cintillo-variante);
+    color: var(--pliego-acento);
+  }
+
+  .pliego-plan__precio {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    color: var(--pliego-tinta-suave);
+  }
+
+  .pliego-plan__precio strong {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 2rem;
+    font-weight: var(--pliego-titular-peso);
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--pliego-tinta);
+  }
+
+  /* Mensual o anual, solo con :has() */
+  .pliego-plan__precio--anual { display: none; }
+
+  .pliego-planes:has(#facturacion-anual:checked) .pliego-plan__precio--anual { display: block; }
+  .pliego-planes:has(#facturacion-anual:checked) .pliego-plan__precio--mensual { display: none; }
+
+  .pliego-plan__nivel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-block-end: 1rem;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-ui);
+  }
+
+  /* Escala de publicidad: 4 segmentos, se llenan hasta --pliego-nivel */
+  .pliego-escala {
+    inline-size: 6rem;
+    block-size: 0.5rem;
+    margin-inline-start: auto;
+    border-radius: var(--semantic-border-radius-full);
+    background: linear-gradient(to right, var(--pliego-escala-lleno) calc(var(--pliego-nivel) * 25%), var(--pliego-escala-vacio) 0);
+    mask: repeating-linear-gradient(to right, currentColor 0 calc(25% - 3px), transparent 0 25%);
+  }
+
+  /* syx-reuse: checked atom-list (su marcador es un icono de SYX) — las listas de cuotas llevan un guion de lacre */
+  .pliego-lista {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pliego-lista li {
+    display: grid;
+    grid-template-columns: 1rem minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  .pliego-lista li::before {
+    content: "—" / "";
+    font-weight: var(--semantic-font-weight-bold);
+    color: var(--semantic-color-primary);
+  }
+
+  .pliego-lista--nunca li::before {
+    content: "×" / "";
+    font-weight: var(--semantic-font-weight-bold);
+  }
+
+  .pliego-plan__ventajas {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-secundario);
+    line-height: 1.45;
+  }
+
+  .pliego-plan .mol-card__footer .atom-btn {
+    inline-size: 100%;
+  }
+
+  .pliego-planes__estado:empty { display: none; }
+
+  .pliego-planes__estado {
+    padding: 0.75rem 1rem;
+    border-inline-start: var(--pliego-grosor-regla-fuerte) solid var(--semantic-color-primary);
+    background: var(--pliego-papel-hundido);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+  }
+
+  .pliego-planes__nota,
+  .pliego-planes__norma {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-tenue);
+    text-align: center;
+  }
+
+  .pliego-planes__seccion {
+    display: grid;
+    gap: 1rem;
+    max-inline-size: 56rem;
+    inline-size: 100%;
+    margin-inline: auto;
+  }
+
+  .pliego-planes__subtitulo {
+    padding-block-start: 0.5rem;
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-regla-fuerte);
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: var(--pliego-t-h2);
+    font-weight: var(--pliego-titular-peso);
+    font-style: var(--pliego-titular-estilo);
+  }
+
+  .pliego-planes__tabla {
+    max-inline-size: 100%;
+    overflow-x: auto;
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-secundario);
+  }
+
+  /* Las celdas empiezan arriba: la cabecera de fila y sus valores alinean */
+  .pliego-planes__tabla :is(th, td) {
+    vertical-align: top;
+  }
+
+  .pliego-planes__total {
+    font-weight: var(--semantic-font-weight-bold);
+  }
+
+  .pliego-planes__nunca {
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+  }
+
+  .pliego-planes__norma {
+    text-align: start;
+  }
+}

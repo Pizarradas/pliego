@@ -1,0 +1,354 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODO REPORTAJE · lectura inmersiva
+   Para quién: quien llega a una pieza larga con tiempo y quiere que el texto
+   y la imagen manden.
+   Color: los mínimos; en oscuro el papel baja a sala de cine.
+   Voz: titular en tamaño óptico de cartel (144) y peso ligero; texto de libro.
+   Portada a sangre con el titular sobre la imagen, capítulos en romano,
+   citas a todo el ancho e imágenes que rompen la columna.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+:root[data-lectura="reportaje"] {
+  --pliego-modo-nombre: "Reportaje";
+
+  /* Color: los mínimos; en oscuro el papel baja a sala de cine */
+  --semantic-color-bg-primary: light-dark(var(--pliego-papel-claro), oklch(from var(--pliego-papel-oscuro) calc(l - 0.04) c h));
+  --semantic-color-bg-secondary: light-dark(oklch(from var(--pliego-papel-claro) calc(l - 0.025) c h), oklch(from var(--pliego-papel-oscuro) calc(l - 0.005) c h));
+  --pliego-sobre-imagen: var(--pliego-papel-claro);
+  --pliego-sobre-imagen-suave: oklch(from var(--pliego-papel-claro) calc(l - 0.08) c h);
+  --pliego-velo-imagen: oklch(from var(--pliego-papel-oscuro) calc(l - 0.06) c h / 0.84);
+
+  /* Voz: titular en tamaño óptico de cartel (144), ligero; texto de libro */
+  --pliego-titular-peso: 300;
+  --pliego-titular-ancho: 100%;
+  --pliego-titular-ejes: "GRAD" var(--pliego-grado), "opsz" 144;
+  --pliego-texto-ancho: 98%;
+
+  --pliego-titular-espaciado: -0.02em;
+  --pliego-titular-interlineado: 1.05;
+  --pliego-cintillo-espaciado: 0.18em;
+
+  --pliego-t-marca: clamp(2.75rem, 10vw, 6rem);
+  --pliego-t-apertura: clamp(2.5rem, 8vw, 5.5rem);
+  --pliego-t-h1: clamp(2.75rem, 9vw, 6.25rem);
+  --pliego-t-h2: clamp(1.75rem, 4vw, 2.5rem);
+  --pliego-t-teaser: clamp(1.375rem, 2.6vw, 1.75rem);
+  --pliego-t-cita: clamp(1.875rem, 5vw, 3.5rem);
+
+  --pliego-texto-tamano: 1.1875rem;
+  --pliego-texto-interlineado: 1.72;
+  --pliego-texto-medida: 38rem;
+  --pliego-parrafo-espacio: 1.3em;
+
+  /* 3 · Imagen protagonista */
+  --pliego-img-proporcion: 4 / 3;
+  --pliego-img-apertura-proporcion: 4 / 5;
+  --pliego-rejilla-min: 17rem;
+  --pliego-ver-ultima: none;
+  --pliego-ver-lema: none;
+  --pliego-teaser-apertura-areas: "media";
+  --pliego-portada-areas:
+    "apertura"
+    "destacadas"
+    "lateral"
+    "profundidad"
+    "pubmedio"
+    "opinion"
+    "ciencia"
+    "mejora"
+    "leido"
+    "boletin";
+  --pliego-columna-portada: sangre;
+  --pliego-columna-ancha: sangre;
+  --pliego-hueco-bloque: clamp(3rem, 8vw, 6rem);
+}
+
+@media (min-width: 48rem) {
+  :root[data-lectura="reportaje"] {
+    --pliego-img-proporcion: 4 / 3;
+    --pliego-img-apertura-proporcion: 16 / 9;
+    --pliego-portada-columnas: repeat(2, minmax(0, 1fr));
+    --pliego-portada-areas:
+      "apertura apertura"
+      "destacadas destacadas"
+      "profundidad profundidad"
+      "pubmedio pubmedio"
+      "opinion lateral"
+      "leido lateral"
+      "ciencia ciencia"
+      "mejora mejora"
+      "boletin boletin";
+  }
+}
+
+@media (min-width: 64rem) {
+  :root[data-lectura="reportaje"] {
+    --pliego-img-apertura-proporcion: 21 / 9;
+    --pliego-portada-columnas: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+@layer syx.app {
+  :root[data-lectura="reportaje"] .pliego-cabecera__marca {
+    font-variation-settings: "GRAD" var(--pliego-grado), "opsz" 144;
+  }
+
+  /* ── Portada: la apertura es una cubierta ── */
+  :root[data-lectura="reportaje"] .pliego-portada {
+    padding-block-start: 0;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-portada__apertura {
+    margin-inline: calc(-1 * var(--pliego-margen));
+  }
+
+  :root[data-lectura="reportaje"] .pliego-teaser--apertura .pliego-teaser__cuerpo {
+    --pliego-seccion: var(--pliego-sobre-imagen);
+  }
+
+  :root[data-lectura="reportaje"] .pliego-teaser--apertura {
+    --pliego-tinta: var(--pliego-sobre-imagen);
+    --pliego-tinta-suave: var(--pliego-sobre-imagen-suave);
+    --pliego-tinta-tenue: var(--pliego-sobre-imagen-suave);
+    --pliego-enlace: var(--pliego-sobre-imagen);
+    --pliego-enlace-hover: var(--pliego-sobre-imagen);
+    --pliego-seccion: var(--pliego-sobre-imagen);
+    --component-pill-dark-bg: var(--pliego-sobre-imagen);
+    --component-pill-dark-border-color: var(--pliego-sobre-imagen);
+    --component-pill-dark-color: oklch(0.15 0.01 240);
+    color: var(--pliego-tinta);
+  }
+
+  :root[data-lectura="reportaje"] .pliego-teaser--apertura .pliego-teaser__cuerpo {
+    grid-area: media;
+    align-self: end;
+    z-index: 1;
+    max-inline-size: 60rem;
+    padding: 4rem var(--pliego-margen) clamp(1.5rem, 5vw, 3.5rem);
+    background: linear-gradient(to top, var(--pliego-velo-imagen) 30%, transparent);
+    gap: 1rem;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-teaser--apertura .pliego-teaser__cuerpo {
+    max-inline-size: none;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-teaser--apertura .pliego-teaser__titulo,
+  :root[data-lectura="reportaje"] .pliego-teaser--apertura .pliego-teaser__entradilla {
+    max-inline-size: 22ch;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-teaser--apertura .pliego-teaser__entradilla {
+    max-inline-size: 40rem;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-teaser--apertura .pliego-teaser__media img {
+    min-block-size: 32rem;
+  }
+
+  /* Rejilla de revista: la primera pieza de cada bloque manda */
+  @media (min-width: 48rem) {
+    :root[data-lectura="reportaje"] .pliego-portada .pliego-rejilla > .pliego-teaser:first-child:not(.pliego-teaser--opinion) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    :root[data-lectura="reportaje"] .pliego-portada .pliego-rejilla > .pliego-teaser:first-child .pliego-teaser__titulo {
+      font-size: var(--pliego-t-h2);
+    }
+
+    :root[data-lectura="reportaje"] .pliego-portada .pliego-rejilla > .pliego-teaser:first-child .pliego-teaser__media img {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  :root[data-lectura="reportaje"] .pliego-bloque__cabecera,
+  :root[data-lectura="reportaje"] .pliego-leido__titulo {
+    border-block-start-width: var(--pliego-grosor-regla);
+    padding-block-start: 1rem;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-bloque__titulo,
+  :root[data-lectura="reportaje"] .pliego-leido__titulo {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 1.75rem;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    text-transform: none;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-teaser__titulo {
+    font-variation-settings: "GRAD" var(--pliego-grado), "opsz" 72;
+  }
+
+  /* ── Artículo: titular sobre la imagen a sangre ── */
+  :root[data-lectura="reportaje"] .pliego-ruta {
+    display: none;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-pagina-articulo {
+    padding-block-start: 0;
+  }
+
+  /* La figura se disuelve en la rejilla: la imagen ocupa la fila 1 a sangre
+     junto al titular y el pie baja a la columna de texto. */
+  :root[data-lectura="reportaje"] .pliego-articulo > .pliego-figura--portada {
+    display: contents;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-figura--portada img {
+    grid-row: 1;
+    grid-column: sangre;
+    inline-size: 100%;
+    aspect-ratio: auto;
+    block-size: min(86svh, 56rem);
+    min-block-size: 30rem;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-figura--portada .pliego-figura__pie {
+    grid-column: texto;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-articulo__cabecera {
+    grid-row: 1;
+    grid-column: sangre;
+    align-self: end;
+    z-index: 1;
+    padding-block: 8rem 2.5rem;
+    padding-inline: max(var(--pliego-margen), calc((100% - 52rem) / 2));
+    background: linear-gradient(to top, var(--pliego-velo-imagen) 55%, transparent);
+    color: var(--pliego-sobre-imagen);
+    --pliego-tinta: var(--pliego-sobre-imagen);
+    --pliego-tinta-suave: var(--pliego-sobre-imagen-suave);
+    --pliego-tinta-tenue: var(--pliego-sobre-imagen-suave);
+    --pliego-regla-suave: oklch(0.98 0.01 80 / 0.3);
+    --pliego-seccion: var(--pliego-sobre-imagen);
+    --component-pill-dark-bg: var(--pliego-sobre-imagen);
+    --component-pill-dark-border-color: var(--pliego-sobre-imagen);
+    --component-pill-dark-color: oklch(0.15 0.01 240);
+    --component-avatar-bg: oklch(0.98 0.01 80 / 0.2);
+    --component-avatar-color: var(--pliego-sobre-imagen);
+  }
+
+  :root[data-lectura="reportaje"] .pliego-articulo__titulo {
+    font-variation-settings: "GRAD" var(--pliego-grado), "opsz" 144;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-compartir {
+    display: none;
+  }
+
+  /* El resumen y las claves esperan al final: primero, la historia */
+  :root[data-lectura="reportaje"] .pliego-facil,
+  :root[data-lectura="reportaje"] .pliego-claves { order: 1; }
+  :root[data-lectura="reportaje"] .pliego-articulo__pie { order: 2; }
+
+  /* Capítulos numerados en romano */
+  :root[data-lectura="reportaje"] .pliego-articulo__cuerpo {
+    counter-reset: capitulo;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-capitulo__titulo {
+    counter-increment: capitulo;
+    display: grid;
+    gap: 0.5rem;
+    padding-block-start: 2rem;
+    text-align: center;
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-capitulo__titulo::before {
+    content: "Capítulo " counter(capitulo, upper-roman);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: var(--pliego-t-mini);
+    font-style: normal;
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: 0.3em;
+    color: var(--pliego-acento);
+  }
+
+  /* Capitular en el primer párrafo */
+  :root[data-lectura="reportaje"] .pliego-capitulo:first-child > .pliego-capitulo__titulo + p::first-letter {
+    float: inline-start;
+    margin-inline-end: 0.08em;
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: var(--pliego-titular-ejes);
+    font-size: 4.6em;
+    font-weight: 300;
+    line-height: 0.8;
+    color: var(--pliego-acento);
+    font-variation-settings: "GRAD" var(--pliego-grado), "opsz" 144;
+  }
+
+  @supports (initial-letter: 3) {
+    :root[data-lectura="reportaje"] .pliego-capitulo:first-child > .pliego-capitulo__titulo + p::first-letter {
+      float: none;
+      font-size: 1em;
+      line-height: 1;
+      initial-letter: 3;
+      margin-inline-end: 0.12em;
+    }
+  }
+
+  /* Cita a todo el ancho, sin regla: solo la voz */
+  :root[data-lectura="reportaje"] .pliego-capitulo > .pliego-cita {
+    grid-column: ancho;
+    padding-block: 2rem;
+    border: 0;
+    text-align: center;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-cita__texto {
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-cita__texto p::before,
+  :root[data-lectura="reportaje"] .pliego-cita__texto p::after {
+    color: var(--pliego-acento);
+  }
+
+  :root[data-lectura="reportaje"] .pliego-figura--ancha .pliego-figura__pie {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-figura--ancha img {
+    aspect-ratio: 21 / 9;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-capitulo > .pliego-nota {
+    border-inline-start: 0;
+    padding-inline: 0;
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    font-style: italic;
+    text-align: center;
+  }
+
+  :root[data-lectura="reportaje"] .pliego-claves {
+    border-inline-start: 0;
+    border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-acento);
+  }
+}
+
+.pliego-opcion--reportaje {
+  --pliego-muestra-papel: var(--semantic-color-bg-primary);
+  --pliego-muestra-tinta: var(--semantic-color-text-primary);
+  --pliego-muestra-acento: var(--semantic-color-primary);
+  --pliego-muestra-peso: 300;
+  --pliego-muestra-ancho: 100%;
+  --pliego-muestra-estilo: italic;
+}

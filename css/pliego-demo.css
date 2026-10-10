@@ -1,0 +1,138 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLIEGO · barra de demostración
+   No forma parte del periódico: es el mando de quien presenta la demo.
+   Cambia cuota, modo, tema y mapa de publicidad con un toque, y se
+   sincroniza con el panel «Modo de lectura» del lector. Va en tinta invertida
+   para que nunca se confunda con la interfaz de Pliego.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+:root {
+  --pliego-demo-fondo: var(--semantic-color-bg-emphasis);
+  --pliego-demo-tinta: var(--semantic-color-on-emphasis);
+  --pliego-demo-activo: var(--semantic-color-primary);
+  --pliego-demo-sobre-activo: var(--semantic-color-on-primary);
+  --pliego-demo-borde: color-mix(in oklab, var(--semantic-color-on-emphasis) 28%, transparent);
+}
+
+/* El interruptor de SYX lee sus colores de tokens: se ajustan al fondo invertido */
+.pliego-demo {
+  --component-form-field-color: var(--pliego-demo-tinta);
+  --component-switch-bg-off: color-mix(in oklab, var(--semantic-color-on-emphasis) 30%, transparent);
+  --component-switch-bg-on: var(--pliego-demo-activo);
+  --component-switch-border-color: var(--pliego-demo-borde);
+  --component-form-field-font-size: 0.8125rem;
+  --component-form-field-line-height: 1.4;
+}
+
+@layer syx.app {
+  /* syx-reuse: checked atom-radio y mol-btn-group — un mando de presentación pide segmentos compactos sobre fondo invertido */
+  .pliego-demo {
+    background: var(--pliego-demo-fondo);
+    color: var(--pliego-demo-tinta);
+    font-family: var(--pliego-fuente-ui);
+    font-stretch: var(--pliego-ui-ancho);
+    font-variation-settings: var(--pliego-ui-ejes);
+    font-size: 0.8125rem;
+  }
+
+  .pliego-demo__formulario {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    max-inline-size: var(--pliego-ancho);
+    margin-inline: auto;
+    padding-inline: var(--pliego-margen);
+    padding-block: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .pliego-demo__titulo {
+    flex: none;
+    font-weight: var(--semantic-font-weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    opacity: 0.75;
+  }
+
+  .pliego-demo__grupo {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+  }
+
+  .pliego-demo__leyenda {
+    font-size: 0.75rem;
+    font-weight: var(--semantic-font-weight-medium);
+    line-height: 1;
+    opacity: 0.75;
+  }
+
+  .pliego-demo__segmentos {
+    display: flex;
+    padding: 2px;
+    border: 1px solid var(--pliego-demo-borde);
+    border-radius: var(--semantic-border-radius-full);
+  }
+
+  .pliego-demo__opcion {
+    /* syx-allow R03: contiene la entrada oculta de su segmento */
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+
+  .pliego-demo__input {
+    /* syx-allow R03: la entrada nativa sigue accesible y enfocable, oculta a la vista */
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    opacity: 0;
+  }
+
+  .pliego-demo__opcion span {
+    display: block;
+    padding: 0.3125rem 0.75rem;
+    border-radius: var(--semantic-border-radius-full);
+    white-space: nowrap;
+  }
+
+  .pliego-demo__opcion:hover span {
+    background: var(--pliego-demo-borde);
+  }
+
+  .pliego-demo__input:checked + span {
+    background: var(--pliego-demo-activo);
+    color: var(--pliego-demo-sobre-activo);
+    font-weight: var(--semantic-font-weight-bold);
+  }
+
+  .pliego-demo__input:focus-visible + span {
+    outline: var(--semantic-focus-ring-width) solid var(--pliego-demo-tinta);
+    outline-offset: 2px;
+  }
+
+  .pliego-demo__mapa {
+    flex: none;
+  }
+
+  @media (min-width: 80rem) {
+    .pliego-demo__formulario {
+      flex-wrap: wrap;
+      justify-content: center;
+      overflow-x: visible;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .pliego-demo__input:checked + span { outline: 2px solid Highlight; }
+  }
+}

@@ -1,0 +1,322 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODO EXPRÉS · escaneo rápido
+   Para quién: quien tiene dos minutos y quiere saber qué importa.
+   Color: papel sin temperatura, tinta casi negra y un rotulador que sale del
+   lacre, no de un color nuevo.
+   Voz: titular condensado (72 %) y negro; texto estrecho (86 %) para meter
+   más en menos líneas. Portada numerada sin imágenes; artículo reducido a
+   claves, datos y primer párrafo de cada capítulo.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+:root[data-lectura="expres"] {
+  --pliego-modo-nombre: "Exprés";
+
+  /* Color: papel sin temperatura, tinta casi negra y un rotulador que sale
+     del lacre (no un color nuevo) */
+  --semantic-color-bg-primary: light-dark(oklch(from var(--pliego-papel-claro) l 0 h), oklch(from var(--pliego-papel-oscuro) l 0.004 h));
+  --semantic-color-bg-secondary: light-dark(oklch(from var(--pliego-papel-claro) calc(l - 0.025) 0 h), oklch(from var(--pliego-papel-oscuro) calc(l + 0.04) 0.004 h));
+  --semantic-color-text-primary: light-dark(oklch(from var(--pliego-tinta-claro) calc(l - 0.05) 0.005 h), var(--pliego-tinta-oscuro));
+  --pliego-rotulador: light-dark(oklch(from var(--pliego-lacre-claro) 0.9 0.07 h), oklch(from var(--pliego-lacre-oscuro) 0.42 0.1 h));
+  --pliego-sobre-rotulador: var(--semantic-color-text-primary);
+
+  /* Voz: titular condensado y negro para meter más en menos líneas */
+  --pliego-titular-peso: 700;
+  --pliego-titular-ancho: 60%;
+  --pliego-titular-ejes: "GRAD" var(--pliego-grado), "opsz" 20;
+  --pliego-texto-ancho: 82%;
+  --pliego-ui-ancho: 80%;
+
+  --pliego-titular-espaciado: -0.015em;
+  --pliego-titular-interlineado: 1.2;
+
+  --pliego-t-marca: 1.75rem;
+  --pliego-t-apertura: clamp(1.5rem, 4vw, 2rem);
+  --pliego-t-h1: clamp(1.625rem, 4.5vw, 2.25rem);
+  --pliego-t-h2: 1.125rem;
+  --pliego-t-teaser: 1.0625rem;
+  --pliego-t-entradilla: 1.0625rem;
+
+  --pliego-texto-tamano: 1.0625rem;
+  --pliego-texto-interlineado: 1.55;
+  --pliego-texto-medida: 40rem;
+
+  /* 3 · Lo esencial, sin adornos */
+  --semantic-border-radius-default: 0.125rem;
+  --pliego-radio: 0;
+  --pliego-img-ver: none;
+  --pliego-ver-media-apertura: none;
+  --pliego-ver-entradilla: none;
+  --pliego-ver-lema: none;
+  --pliego-ver-nota: none;
+  --pliego-ver-cita: none;
+  --pliego-ver-facil: none;
+  --pliego-ver-contexto: none;
+  --pliego-ver-tiempo-completo: none;
+  --pliego-ver-tiempo-expres: inline;
+  --pliego-hueco: 1rem;
+  --pliego-hueco-bloque: 2rem;
+  --pliego-hueco-teaser: 0.25rem;
+  --pliego-rejilla-min: 100%;
+  --pliego-teaser-areas: "cuerpo";
+  --pliego-teaser-apertura-areas: "cuerpo";
+  --pliego-portada-areas:
+    "ultima"
+    "apertura"
+    "destacadas"
+    "lateral"
+    "leido"
+    "opinion"
+    "pubmedio"
+    "profundidad"
+    "mejora"
+    "ciencia"
+    "boletin";
+}
+
+@media (min-width: 64rem) {
+  :root[data-lectura="expres"] {
+    --pliego-ancho: 72rem;
+    --pliego-portada-columnas: repeat(2, minmax(0, 1fr));
+    --pliego-portada-areas:
+      "ultima ultima"
+      "apertura leido"
+      "apertura lateral"
+      "destacadas destacadas"
+      "opinion opinion"
+      "pubmedio pubmedio"
+      "profundidad ciencia"
+      "mejora mejora"
+      "boletin boletin";
+    --pliego-rejilla-min: 24rem;
+  }
+}
+
+@layer syx.app {
+  /* ── Cabecera compacta: marca y edición en una línea ── */
+  :root[data-lectura="expres"] .pliego-cabecera {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    text-align: start;
+    gap: 0.5rem 1rem;
+    padding-block-start: 0.5rem;
+  }
+
+  :root[data-lectura="expres"] .pliego-cabecera__marca {
+    grid-row: 1;
+    grid-column: 1;
+    padding: 0.125rem 0.5rem;
+    background: var(--pliego-rotulador);
+    color: var(--pliego-sobre-rotulador);
+  }
+
+  :root[data-lectura="expres"] .pliego-cabecera__barra {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  :root[data-lectura="expres"] .pliego-cabecera__edicion time {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+  }
+
+  :root[data-lectura="expres"] .pliego-secciones {
+    grid-column: 1 / -1;
+  }
+
+  :root[data-lectura="expres"] .pliego-secciones__lista {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-size: var(--pliego-t-mini);
+  }
+
+  @media (max-width: 40rem) {
+    :root[data-lectura="expres"] .pliego-cabecera__edicion {
+      display: none;
+    }
+  }
+
+  /* ── Portada: titulares numerados ── */
+  :root[data-lectura="expres"] .pliego-portada {
+    counter-reset: titular;
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser {
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    grid-template-areas: "numero cuerpo";
+    padding-block: 0.75rem;
+    border-block-end: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+    counter-increment: titular;
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser::before {
+    content: counter(titular, decimal-leading-zero);
+    grid-area: numero;
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-size: var(--pliego-t-ui);
+    color: var(--pliego-tinta-tenue);
+    padding-block-start: 0.125rem;
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser--opinion {
+    border-block-start: 0;
+    padding-block-start: 0.75rem;
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser--opinion .pliego-teaser__titulo {
+    font-style: normal;
+    font-weight: var(--pliego-titular-peso);
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser--opinion .pliego-teaser__meta {
+    order: 0;
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser--opinion .pliego-retrato,
+  :root[data-lectura="expres"] .pliego-teaser:not(.pliego-teaser--patrocinado) .pliego-teaser__cintillo .pliego-genero,
+  :root[data-lectura="expres"] .pliego-teaser__lugar {
+    display: none;
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser__tiempo::after {
+    content: "";
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser:hover .pliego-teaser__enlace {
+    text-decoration: none;
+    background: var(--pliego-rotulador);
+    color: var(--pliego-sobre-rotulador);
+    box-decoration-break: clone;
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser--apertura .pliego-teaser__titulo {
+    font-weight: 700;
+  }
+
+  :root[data-lectura="expres"] .pliego-teaser--apertura .pliego-teaser__titulo a {
+    background: linear-gradient(transparent 58%, var(--pliego-rotulador) 58%);
+    box-decoration-break: clone;
+  }
+
+  :root[data-lectura="expres"] .pliego-bloque {
+    gap: 0;
+  }
+
+  :root[data-lectura="expres"] .pliego-rejilla {
+    column-gap: 2rem;
+    row-gap: 0;
+  }
+
+  :root[data-lectura="expres"] .pliego-bloque__titulo,
+  :root[data-lectura="expres"] .pliego-leido__titulo,
+  :root[data-lectura="expres"] .pliego-claves__titulo {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-weight: 500;
+  }
+
+  :root[data-lectura="expres"] .pliego-leido__item::before {
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-size: 1rem;
+    color: var(--pliego-tinta-tenue);
+  }
+
+  :root[data-lectura="expres"] .pliego-leido__item {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  /* ── Artículo: claves, datos y primer párrafo ── */
+  :root[data-lectura="expres"] .pliego-ruta,
+  :root[data-lectura="expres"] .pliego-compartir,
+  :root[data-lectura="expres"] .pliego-metodo,
+  :root[data-lectura="expres"] .pliego-autora,
+  :root[data-lectura="expres"] .pliego-articulo__entradilla,
+  :root[data-lectura="expres"] .pliego-capitulo > p:not(.pliego-capitulo__titulo + p) {
+    display: none;
+  }
+
+  :root[data-lectura="expres"] .pliego-articulo .pliego-articulo__cuerpo {
+    row-gap: 1.5rem;
+  }
+
+  :root[data-lectura="expres"] .pliego-capitulo::after {
+    content: "Sigue en la versión completa";
+    grid-column: texto;
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-size: var(--pliego-t-mini);
+    color: var(--pliego-tinta-tenue);
+  }
+
+  :root[data-lectura="expres"] .pliego-capitulo__titulo {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding-block-start: 0.75rem;
+    border-block-start: var(--pliego-grosor-regla) solid var(--pliego-regla-fuerte);
+  }
+
+  :root[data-lectura="expres"] .pliego-articulo__cuerpo {
+    counter-reset: capitulo;
+  }
+
+  :root[data-lectura="expres"] .pliego-capitulo__titulo::before {
+    counter-increment: capitulo;
+    content: counter(capitulo, decimal-leading-zero);
+    font-family: var(--pliego-fuente-dato);
+    font-stretch: var(--pliego-dato-ancho);
+    font-variation-settings: var(--pliego-dato-ejes);
+    font-size: var(--pliego-t-ui);
+    color: var(--pliego-tinta-tenue);
+  }
+
+  :root[data-lectura="expres"] .pliego-claves {
+    border-inline-start: 0;
+    border: var(--pliego-grosor-regla-fuerte) solid var(--pliego-regla-fuerte);
+    background: var(--pliego-papel);
+  }
+
+  :root[data-lectura="expres"] .pliego-claves__lista {
+    font-size: 1.0625rem;
+  }
+
+  :root[data-lectura="expres"] .pliego-claves strong {
+    background: var(--pliego-rotulador);
+    color: var(--pliego-sobre-rotulador);
+    padding-inline: 0.15em;
+    box-decoration-break: clone;
+  }
+
+  :root[data-lectura="expres"] .pliego-tiempo__expres {
+    padding-inline: 0.375rem;
+    background: var(--pliego-rotulador);
+    color: var(--pliego-sobre-rotulador);
+  }
+
+  :root[data-lectura="expres"] .pliego-firma {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :root[data-lectura="expres"] .pliego-firma .pliego-retrato {
+    display: none;
+  }
+}
+
+.pliego-opcion--expres {
+  --pliego-muestra-papel: var(--semantic-color-bg-primary);
+  --pliego-muestra-tinta: var(--semantic-color-text-primary);
+  --pliego-muestra-acento: var(--semantic-color-primary);
+  --pliego-muestra-peso: 760;
+  --pliego-muestra-ancho: 60%;
+  --pliego-muestra-estilo: normal;
+}

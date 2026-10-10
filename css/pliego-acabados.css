@@ -1,0 +1,173 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLIEGO · acabados por cuota
+
+   La cuota no solo quita publicidad: sube el acabado de la interfaz en
+   cualquier modo de lectura. Dos mecanismos, los dos de SYX:
+
+   1. Un número, --pliego-nivel (0 Abierto · 1 Lector · 2 Habitual · 3 Mecenas),
+      que pliego.css usa en calc() para el aire entre bloques, el interlineado y
+      la apretura de los titulares. Escala continua, sin reglas nuevas.
+   2. Rasgos discretos por peldaño, escritos solo con tokens y con la misma
+      familia y la misma paleta (el «oro» de Mecenas se deriva del lacre).
+
+   Matriz de rasgos (✓ se aplica · — el modo lo veta):
+                          Diario Fácil Reportaje Edición Exprés
+   Lector    línea de suscripción  ✓     ✓      ✓        ✓      ✓
+             filetes de lacre      ✓     —      ✓        ✓      ✓
+   Habitual  capitular             ✓     —     (ya)      ✓      —
+             filete fino 0,75 px   ✓     —      ✓        ✓      ✓
+             títulos de bloque en
+             cursiva de cartel     ✓     —      ✓        ✓      —
+   Mecenas   cabecera expandida    ✓     ✓      ✓        ✓      ✓
+             oro derivado del lacre✓     ✓      ✓        ✓      ✓
+             grano de papel        ✓     —      ✓        ✓      —
+             florones de bloque    ✓     —      ✓        ✓      —
+   Fácil no recibe nada que reste legibilidad; Exprés, nada que reste densidad.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+/* ── 1 · El número ────────────────────────────────────────────────────────── */
+:root[data-cuota="lector"] { --pliego-nivel: 1; }
+:root[data-cuota="habitual"] { --pliego-nivel: 2; }
+:root[data-cuota="mecenas"] { --pliego-nivel: 3; }
+
+/* ── 2 · Tokens de acabado ────────────────────────────────────────────────── */
+:root {
+  --pliego-filete-acento: var(--pliego-regla-fuerte);
+  --pliego-capitular-color: var(--semantic-color-primary-text);
+  --pliego-oro: light-dark(oklch(from var(--pliego-lacre-claro) 0.6 0.11 calc(h + 50)), oklch(from var(--pliego-lacre-oscuro) 0.8 0.1 calc(h + 50)));
+  /* El oro como tinta de texto pequeño: más oscuro en claro, más claro en
+     oscuro, para pasar 4,5:1 sobre el papel */
+  --pliego-oro-texto: light-dark(oklch(from var(--pliego-lacre-claro) 0.47 0.1 calc(h + 50)), oklch(from var(--pliego-lacre-oscuro) 0.82 0.1 calc(h + 50)));
+  --pliego-cuota-tinta: var(--semantic-color-primary-text);
+  --pliego-grano: none;
+  --pliego-grano-claro: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --pliego-grano-oscuro: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --pliego-grano-elegido: var(--pliego-grano-claro);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --pliego-grano-elegido: var(--pliego-grano-oscuro); }
+}
+:root[data-theme="dark"] { --pliego-grano-elegido: var(--pliego-grano-oscuro); }
+
+/* Lector: los filetes de cabecera de bloque pasan a lacre */
+:root[data-cuota="lector"]:not([data-lectura="facil"]),
+:root[data-cuota="habitual"]:not([data-lectura="facil"]) {
+  --pliego-filete-acento: var(--semantic-color-primary);
+}
+
+/* Habitual y Mecenas: filete fino */
+:root:is([data-cuota="habitual"], [data-cuota="mecenas"]):not([data-lectura="facil"]) {
+  --pliego-grosor-regla: 0.75px;
+}
+
+/* Mecenas: el oro (derivado del lacre) sustituye al lacre en filetes, capitular
+   y barra de progreso; grano de papel donde no estorba */
+:root[data-cuota="mecenas"] {
+  --pliego-filete-acento: var(--pliego-oro);
+  --pliego-capitular-color: var(--pliego-oro);
+  --pliego-cuota-tinta: var(--pliego-oro-texto);
+  --component-progress-fill: var(--pliego-oro);
+  --semantic-color-selection-bg: light-dark(oklch(from var(--pliego-lacre-claro) 0.9 0.06 calc(h + 50)), oklch(from var(--pliego-lacre-oscuro) 0.42 0.08 calc(h + 50)));
+  --pliego-marca-ancho: 145%;
+  --pliego-marca-peso: 700;
+  --pliego-marca-espaciado: -0.02em;
+}
+
+:root[data-cuota="mecenas"]:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="contexto"], [data-lectura="escucha"], [data-lectura="reportaje"], [data-lectura="edicion"]) {
+  --pliego-grano: var(--pliego-grano-elegido);
+}
+
+@layer syx.app {
+  /* syx-reuse-file: acabados de la cabecera y los bloques propios de Pliego; ningún componente de SYX cambia aquí más que por tokens */
+
+  body.pliego-pagina {
+    background-image: var(--pliego-grano);
+  }
+
+  /* Línea de suscripción junto a la fecha (todas las cuotas de pago) */
+  .pliego-cabecera__cuota {
+    font-weight: var(--semantic-font-weight-bold);
+    color: var(--pliego-cuota-tinta);
+  }
+
+  /* Filete de las cabeceras de bloque y de «Lo más leído» */
+  .pliego-bloque__cabecera,
+  .pliego-leido__titulo {
+    border-block-start-color: var(--pliego-filete-acento);
+  }
+
+  /* Capitular: Habitual y Mecenas, solo en Diario y Edición (Reportaje ya la
+     trae como rasgo de modo; Fácil y Exprés la vetan) */
+  :root:is([data-cuota="habitual"], [data-cuota="mecenas"]):is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="contexto"], [data-lectura="escucha"], [data-lectura="edicion"]) .pliego-capitulo:first-child > .pliego-capitulo__titulo + p::first-letter {
+    initial-letter: 3;
+    margin-inline-end: 0.1em;
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: "GRAD" var(--pliego-grado), "opsz" 144;
+    font-weight: var(--pliego-titular-peso);
+    color: var(--pliego-capitular-color);
+  }
+
+  /* Habitual+: títulos de bloque en cursiva de cartel (no en Fácil ni Exprés) */
+  :root:is([data-cuota="habitual"], [data-cuota="mecenas"]):is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="contexto"], [data-lectura="escucha"], [data-lectura="reportaje"], [data-lectura="edicion"]) :is(.pliego-bloque__titulo, .pliego-leido__titulo) {
+    font-family: var(--pliego-fuente-titular);
+    font-stretch: var(--pliego-titular-ancho);
+    font-variation-settings: "GRAD" var(--pliego-grado), "opsz" 72;
+    font-size: 1.375rem;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    text-transform: none;
+  }
+
+  :root:is([data-cuota="habitual"], [data-cuota="mecenas"]):is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="contexto"], [data-lectura="escucha"], [data-lectura="reportaje"], [data-lectura="edicion"]) .pliego-leido__item::before {
+    font-style: italic;
+    font-variation-settings: "GRAD" var(--pliego-grado), "opsz" 144;
+    font-weight: 300;
+  }
+
+  /* Habitual+: la cita abre con unas comillas de cartel en el color de acabado */
+  :root:is([data-cuota="habitual"], [data-cuota="mecenas"]):not([data-lectura="facil"]) .pliego-cita__texto p::before {
+    color: var(--pliego-capitular-color);
+  }
+
+  /* Mecenas: la cabecera se expande y gana un filete de oro bajo el lema */
+  @media (min-width: 48rem) {
+    :root[data-cuota="mecenas"]:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="contexto"], [data-lectura="escucha"], [data-lectura="edicion"]) .pliego-cabecera__lema {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    :root[data-cuota="mecenas"] .pliego-cabecera__lema::before,
+    :root[data-cuota="mecenas"] .pliego-cabecera__lema::after {
+      content: "";
+      inline-size: 3rem;
+      border-block-start: var(--pliego-grosor-regla-fuerte) solid var(--pliego-oro);
+    }
+  }
+
+  /* Mecenas: florón de oro en las cabeceras de bloque (no en Fácil ni Exprés) */
+  :root[data-cuota="mecenas"]:is(:not([data-lectura]), [data-lectura="diario"], [data-lectura="contexto"], [data-lectura="escucha"], [data-lectura="reportaje"], [data-lectura="edicion"]) .pliego-bloque__titulo::before {
+    content: "❦" / "";
+    margin-inline-end: 0.5rem;
+    font-style: normal;
+    color: var(--pliego-oro);
+  }
+
+  :root[data-cuota="mecenas"] .pliego-insignia {
+    border-color: var(--pliego-oro);
+    color: var(--pliego-oro-texto);
+  }
+
+  /* Mecenas: pies de foto y créditos en cursiva fina */
+  :root[data-cuota="mecenas"]:not([data-lectura="facil"]) .pliego-figura__pie {
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-style: italic;
+  }
+}

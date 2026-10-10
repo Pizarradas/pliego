@@ -1,0 +1,272 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODO FÁCIL · lectura fácil y baja carga cognitiva
+   Para quién: dificultades de comprensión lectora, baja visión, dislexia,
+   lectores mayores o que leen en una lengua que no es la suya.
+   Inspirado en las pautas de Lectura Fácil (UNE 153101 EX) y en WCAG 2.2.
+   Color: los mínimos, con tinta más negra y lacre más oscuro (AAA); en oscuro,
+   pizarra en lugar de negro para evitar el halo.
+   Voz: la misma Roboto Serif, más ancha (106 %), con más grado y en tamaño
+   óptico pequeño (14): ojo grande, remates firmes y poco contraste de trazo.
+   Sin cursivas de énfasis ni mayúsculas espaciadas. Una columna, cajas
+   táctiles, resumen fácil abierto y primero, siglas desplegadas.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer syx.reset, syx.base, syx.tokens, syx.atoms, syx.molecules, syx.organisms, syx.app, syx.utilities;
+
+:root[data-lectura="facil"] {
+  --pliego-modo-nombre: "Fácil";
+
+  /* Color: tinta más negra, papel algo más cálido y, en oscuro, pizarra en vez
+     de negro. El lacre se oscurece para pasar AAA como enlace. */
+  --semantic-color-bg-primary: light-dark(oklch(from var(--pliego-papel-claro) l calc(c + 0.01) h), oklch(from var(--pliego-papel-oscuro) calc(l + 0.06) c h));
+  --semantic-color-bg-secondary: light-dark(oklch(from var(--pliego-papel-claro) calc(l - 0.03) calc(c + 0.012) h), oklch(from var(--pliego-papel-oscuro) calc(l + 0.1) c h));
+  --semantic-color-text-primary: light-dark(oklch(from var(--pliego-tinta-claro) calc(l - 0.05) c h), oklch(from var(--pliego-tinta-oscuro) calc(l + 0.03) c h));
+  --semantic-color-text-secondary: light-dark(oklch(from var(--pliego-tinta-claro) calc(l + 0.06) c h), oklch(from var(--pliego-tinta-oscuro) calc(l - 0.04) c h));
+  --semantic-color-text-tertiary: light-dark(oklch(from var(--pliego-tinta-claro) calc(l + 0.13) c h), oklch(from var(--pliego-tinta-oscuro) calc(l - 0.09) c h));
+  --semantic-color-border-default: light-dark(oklch(from var(--pliego-tinta-claro) 0.6 c h), oklch(from var(--pliego-tinta-oscuro) 0.62 c h));
+  --semantic-color-border-subtle: light-dark(oklch(from var(--pliego-tinta-claro) 0.8 calc(c * 0.5) h), oklch(from var(--pliego-tinta-oscuro) 0.45 c h));
+  --semantic-color-primary-text: light-dark(oklch(from var(--pliego-lacre-claro) calc(l - 0.08) c h), oklch(from var(--pliego-lacre-oscuro) calc(l + 0.06) c h));
+  --semantic-color-link-default: var(--semantic-color-primary-text);
+  --semantic-focus-ring-color: light-dark(var(--pliego-tinta-claro), var(--pliego-lacre-oscuro));
+
+  /* Voz: la misma familia, más ancha, más robusta y en un tamaño óptico de
+     texto pequeño (ojo grande, remates firmes, poco contraste de trazo) */
+  --pliego-titular-peso: 700;
+  --pliego-titular-ancho: 104%;
+  --pliego-titular-ejes: "GRAD" var(--pliego-grado), "opsz" 24;
+  --pliego-texto-ancho: 106%;
+  --pliego-texto-ejes: "GRAD" calc(var(--pliego-grado) + 25), "opsz" 14;
+  --pliego-ui-ancho: 104%;
+  --pliego-ui-ejes: "GRAD" calc(var(--pliego-grado) + 25), "opsz" 14;
+  --pliego-dato-ancho: 100%;
+
+  --semantic-focus-ring-width: 3px;
+  --semantic-focus-ring-offset: 3px;
+
+  --pliego-titular-espaciado: 0em;
+  --pliego-titular-interlineado: 1.25;
+  --pliego-cintillo-caja: none;
+  --pliego-cintillo-espaciado: 0;
+
+  --pliego-t-marca: clamp(2.25rem, 7vw, 3rem);
+  --pliego-t-apertura: clamp(1.75rem, 5vw, 2.25rem);
+  --pliego-t-h1: clamp(1.875rem, 5.5vw, 2.5rem);
+  --pliego-t-h2: clamp(1.5rem, 4vw, 1.75rem);
+  --pliego-t-teaser: 1.375rem;
+  --pliego-t-entradilla: 1.25rem;
+  --pliego-t-cita: 1.375rem;
+  --pliego-t-bloque: 1.375rem;
+  --pliego-t-ui: 1rem;
+  --pliego-t-secundario: 1.0625rem;
+  --semantic-font-size-body-small: 1rem;
+  --component-breadcrumb-font-size: 1rem;
+  --component-breadcrumb-link-padding-block: 0.625rem;
+  /* Objetivos táctiles de 44 px (WCAG 2.5.5, AAA) */
+  --pliego-objetivo-relleno: 0.625rem;
+  --pliego-pub-etiqueta-alto: 2.75rem;
+  --component-form-field-line-height: 2.75rem;
+  --pliego-t-mini: 1rem;
+
+  --pliego-texto-tamano: 1.3125rem;
+  --pliego-texto-interlineado: 1.75;
+  --pliego-texto-medida: 36rem;
+  --pliego-texto-guiones: none;
+  --pliego-texto-espaciado: 0.01em;
+  --pliego-texto-palabras: 0.08em;
+  --pliego-parrafo-espacio: 1.4em;
+  --pliego-subrayado-grosor: 0.1em;
+
+  /* 3 · Forma: cajas claras y objetivos táctiles amplios */
+  --semantic-border-radius-default: 0.75rem;
+  --semantic-border-radius-lg: 1rem;
+  --pliego-radio: 1rem;
+  --pliego-img-radio: 0.75rem;
+  --pliego-grosor-regla: 2px;
+  --pliego-grosor-regla-fuerte: 4px;
+  --component-button-height-sm: 2.75rem;
+  --component-button-font-size-sm: 1rem;
+  --component-disclosure-content-color: var(--semantic-color-text-primary);
+  --component-disclosure-summary-font-weight: var(--semantic-font-weight-bold);
+
+  /* 4 · Un solo camino */
+  --pliego-ancho: 46rem;
+  --pliego-ver-lema: none;
+  --pliego-ver-tiempo-facil: inline;
+  --pliego-img-proporcion: 1;
+  --pliego-img-apertura-proporcion: 16 / 9;
+  --pliego-rejilla-min: 100%;
+  --pliego-teaser-areas: "media cuerpo";
+  --pliego-teaser-columnas: 5.5rem minmax(0, 1fr);
+  --pliego-hueco-teaser: 0.5rem;
+  --pliego-portada-areas:
+    "apertura"
+    "destacadas"
+    "lateral"
+    "ultima"
+    "opinion"
+    "pubmedio"
+    "profundidad"
+    "mejora"
+    "ciencia"
+    "leido"
+    "boletin";
+  --pliego-columna-portada: texto;
+  --pliego-columna-ancha: texto;
+}
+
+@media (min-width: 48rem) {
+  :root[data-lectura="facil"] {
+    --pliego-teaser-columnas: 9rem minmax(0, 1fr);
+    --pliego-articulo-columnas:
+      [sangre-start] minmax(var(--pliego-margen), 1fr)
+      [ancho-start texto-start margen-start] minmax(0, var(--pliego-texto-medida))
+      [texto-end margen-end ancho-end] minmax(var(--pliego-margen), 1fr)
+      [sangre-end];
+  }
+}
+
+@layer syx.app {
+  /* Cada pieza es una caja táctil con borde visible */
+  :root[data-lectura="facil"] .pliego-teaser:not(.pliego-teaser--apertura) {
+    padding: 1rem;
+    border: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+    border-radius: var(--pliego-radio);
+    background: var(--pliego-papel);
+  }
+
+  :root[data-lectura="facil"] .pliego-teaser:hover {
+    border-color: var(--pliego-tinta);
+  }
+
+  /* Objetivos de 44 px en listas de enlaces */
+  :root[data-lectura="facil"] :is(.pliego-leido__item a, .pliego-temas__lista a, .pliego-pie__lista a, .pliego-ultima__item a, .pliego-cabecera__marca a, .pliego-pub__quitar, .pliego-firma__autor a) {
+    display: inline-block;
+    min-block-size: 2.75rem;
+    padding-block: 0.375rem;
+  }
+
+  /* El enlace se ve como enlace, siempre */
+  :root[data-lectura="facil"] .pliego-teaser__enlace,
+  :root[data-lectura="facil"] .pliego-leido__item a,
+  :root[data-lectura="facil"] .pliego-ultima__item a,
+  :root[data-lectura="facil"] .pliego-capitulo a {
+    text-decoration: underline;
+    text-decoration-thickness: var(--pliego-subrayado-grosor);
+    text-underline-offset: 0.2em;
+  }
+
+  /* Menos ruido: fuera lugares, números de edición y etiquetas de género */
+  :root[data-lectura="facil"] .pliego-teaser__lugar,
+  :root[data-lectura="facil"] .pliego-cabecera__numero,
+  :root[data-lectura="facil"] .pliego-firma__lugar,
+  :root[data-lectura="facil"] .pliego-teaser:not(.pliego-teaser--patrocinado) .pliego-teaser__cintillo .pliego-genero,
+  :root[data-lectura="facil"] .pliego-figura__credito {
+    display: none;
+  }
+
+  :root[data-lectura="facil"] .pliego-bloque__cabecera,
+  :root[data-lectura="facil"] .pliego-leido__titulo {
+    border-block-start-width: 0;
+    padding-block-start: 0;
+  }
+
+  :root[data-lectura="facil"] .pliego-teaser--opinion .pliego-teaser__titulo,
+  :root[data-lectura="facil"] .pliego-articulo dfn {
+    font-style: normal;
+    font-weight: var(--semantic-font-weight-bold);
+  }
+
+  :root[data-lectura="facil"] .pliego-ultima {
+    padding: 1rem;
+    border: var(--pliego-grosor-regla) solid var(--pliego-alerta);
+    border-radius: var(--pliego-radio);
+  }
+
+  :root[data-lectura="facil"] .pliego-ultima__lista {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :root[data-lectura="facil"] .pliego-ultima__item {
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+  }
+
+  /* Artículo: el resumen fácil se abre solo y se marca como lo primero */
+  :root[data-lectura="facil"] .pliego-facil {
+    padding: 1.25rem;
+    border: var(--pliego-grosor-regla-fuerte) solid var(--semantic-color-primary);
+    border-radius: var(--pliego-radio);
+    background: var(--pliego-papel-hundido);
+    font-family: var(--pliego-fuente-texto);
+    font-stretch: var(--pliego-texto-ancho);
+    font-variation-settings: var(--pliego-texto-ejes);
+    font-size: 1.25rem;
+    line-height: 1.7;
+  }
+
+  :root[data-lectura="facil"] .pliego-articulo__cabecera { order: -2; }
+  :root[data-lectura="facil"] .pliego-facil { order: -1; }
+
+  :root[data-lectura="facil"] .pliego-facil__detalle::details-content {
+    content-visibility: visible;
+    block-size: auto;
+  }
+
+  :root[data-lectura="facil"] .pliego-facil__detalle .mol-disclosure__content p + p {
+    margin-block-start: 0.75em;
+  }
+
+  /* Las siglas se leen enteras */
+  :root[data-lectura="facil"] .pliego-articulo abbr[title] {
+    text-decoration: none;
+    cursor: auto;
+  }
+
+  :root[data-lectura="facil"] .pliego-articulo abbr[title]::after {
+    content: " (" attr(title) ")";
+  }
+
+  /* Cita: sin comillas gigantes ni cursiva, como una frase más destacada */
+  :root[data-lectura="facil"] .pliego-cita {
+    padding: 1rem 1.25rem;
+    border: 0;
+    border-inline-start: var(--pliego-grosor-regla-fuerte) solid var(--semantic-color-primary);
+    background: var(--pliego-papel-hundido);
+    border-radius: var(--pliego-radio);
+  }
+
+  :root[data-lectura="facil"] .pliego-claves {
+    border: var(--pliego-grosor-regla) solid var(--pliego-regla);
+    font-size: 1.125rem;
+  }
+
+  :root[data-lectura="facil"] .pliego-claves__lista {
+    font-size: 1.125rem;
+    gap: 1rem;
+  }
+
+  :root[data-lectura="facil"] .pliego-nota {
+    border: var(--pliego-grosor-regla) solid var(--pliego-regla-suave);
+    border-radius: var(--pliego-radio);
+    font-size: 1.0625rem;
+  }
+
+  :root[data-lectura="facil"] .pliego-cronologia__item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.125rem;
+  }
+
+  /* Lo complementario se aparta para no partir la lectura */
+  :root[data-lectura="facil"] .pliego-compartir,
+  :root[data-lectura="facil"] .pliego-metodo {
+    display: none;
+  }
+}
+
+.pliego-opcion--facil {
+  --pliego-muestra-papel: var(--semantic-color-bg-primary);
+  --pliego-muestra-tinta: var(--semantic-color-text-primary);
+  --pliego-muestra-acento: var(--semantic-color-primary);
+  --pliego-muestra-peso: 700;
+  --pliego-muestra-ancho: 106%;
+  --pliego-muestra-estilo: normal;
+}
